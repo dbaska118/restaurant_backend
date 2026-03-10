@@ -11,6 +11,6 @@ services:
     ports:
       - 5444:5432
     volumes:
-      - pg-test:/var/lib/postgresql/data
+      - pg-test:/var/lib/postgresql
 volumes:
   pg-test:
