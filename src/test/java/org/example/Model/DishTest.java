@@ -1,4 +1,4 @@
-package Model;
+package org.example.Model;
 
 import org.example.Model.Dish;
 import org.example.Model.DishType;
