@@ -1,7 +1,7 @@
-package org.example.Service;
+package org.example.service.dish;
 
-import org.example.Model.Dish;
-import org.example.Model.DishType;
+import org.example.model.dish.Dish;
+import org.example.model.dish.DishType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

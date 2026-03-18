@@ -1,8 +1,8 @@
-package org.example.Controller;
+package org.example.controller.dish;
 
 import jakarta.persistence.EntityManager;
-import org.example.Model.Dish;
-import org.example.Model.DishType;
+import org.example.model.dish.Dish;
+import org.example.model.dish.DishType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

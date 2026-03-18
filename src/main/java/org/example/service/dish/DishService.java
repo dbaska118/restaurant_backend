@@ -1,13 +1,11 @@
-package org.example.Service;
+package org.example.service.dish;
 
-import org.example.Model.Dish;
-import org.example.Model.DishType;
-import org.example.Repository.DishRepository;
+import org.example.model.dish.Dish;
+import org.example.repository.dish.DishRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class DishService {

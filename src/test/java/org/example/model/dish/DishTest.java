@@ -1,7 +1,5 @@
-package org.example.Model;
+package org.example.model.dish;
 
-import org.example.Model.Dish;
-import org.example.Model.DishType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

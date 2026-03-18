@@ -1,7 +1,7 @@
-package org.example.Controller;
+package org.example.controller.dish;
 
-import org.example.Model.Dish;
-import org.example.Service.DishService;
+import org.example.model.dish.Dish;
+import org.example.service.dish.DishService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

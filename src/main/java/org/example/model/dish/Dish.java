@@ -1,4 +1,4 @@
-package org.example.Model;
+package org.example.model.dish;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

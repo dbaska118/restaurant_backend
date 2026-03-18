@@ -1,7 +1,7 @@
-package org.example.Repository;
+package org.example.repository.dish;
 
-import org.example.Model.Dish;
-import org.example.Model.DishType;
+import org.example.model.dish.Dish;
+import org.example.model.dish.DishType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
