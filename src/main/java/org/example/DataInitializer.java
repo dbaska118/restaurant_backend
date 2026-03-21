@@ -3,7 +3,11 @@ package org.example;
 import jakarta.annotation.PostConstruct;
 import org.example.model.dish.Dish;
 import org.example.model.dish.DishType;
+import org.example.model.user.Admin;
+import org.example.model.user.User;
+import org.example.repository.user.UserRepository;
 import org.example.service.dish.DishService;
+import org.example.service.user.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
@@ -13,10 +17,14 @@ import org.springframework.stereotype.Component;
 public class DataInitializer {
 
     private final DishService dishService;
+    private final UserRepository userRepository;
+    private final AuthService authService;
 
     @Autowired
-    public DataInitializer(DishService dishService) {
+    public DataInitializer(DishService dishService, UserRepository userRepository, AuthService authService) {
         this.dishService = dishService;
+        this.userRepository = userRepository;
+        this.authService = authService;
     }
 
     @PostConstruct
@@ -53,6 +61,11 @@ public class DataInitializer {
             dishService.createDish(drink1);
             dishService.createDish(drink2);
             dishService.createDish(drink3);
+        }
+        if(userRepository.findByEmail("admin").isEmpty()){
+            User admin = new Admin("admin", "admin", "admin", "admin");
+            admin.setRole("headAdmin");
+            authService.register(admin);
         }
     }
 }
