@@ -18,7 +18,7 @@ import java.util.function.Function;
 public class JwtService {
 
     private static final String secret = "c7ff16dd27717f1d2a4fadc65248ebfe359ff6a7e0831802a5bd2be4c8af28b6";
-    private static final int accessTokenAge = 1000 * 60 * 2;
+    private static final int accessTokenAge = 1000 * 60 * 15;
     private static final int refreshTokenAge = 1000 * 60 * 60 * 24 * 7;
 
 

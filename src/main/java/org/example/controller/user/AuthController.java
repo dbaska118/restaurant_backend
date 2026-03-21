@@ -1,5 +1,9 @@
 package org.example.controller.user;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.example.model.user.AuthResponse;
+import org.example.model.user.LoginRequest;
 import org.example.model.user.User;
 import org.example.service.user.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +35,31 @@ public class AuthController {
         } catch (RuntimeException e) {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest loginRequest, HttpServletResponse response) {
+        AuthResponse authResponse = authService.login(loginRequest, response);
+        if (authResponse == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(authResponse,HttpStatus.OK);
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletResponse response) {
+        authService.logout(response);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<AuthResponse> refreshToken(HttpServletRequest request) {
+        AuthResponse authResponse = authService.refreshToken(request);
+
+        if(authResponse == null) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        return new ResponseEntity<>(authResponse,HttpStatus.OK);
     }
 
 }

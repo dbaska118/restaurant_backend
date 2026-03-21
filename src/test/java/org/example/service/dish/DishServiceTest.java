@@ -18,7 +18,6 @@ import java.util.List;
 @Import(DishService.class)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @ActiveProfiles("test")
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class DishServiceTest {
 
     @Autowired
