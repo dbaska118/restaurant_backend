@@ -78,7 +78,7 @@ public class AuthService {
                     .build();
             response.addHeader(HttpHeaders.SET_COOKIE, responseCookie.toString());
         }
-        return new AuthResponse(accessToken, refreshToken, user.getEmail());
+        return new AuthResponse(accessToken, user.getEmail(), user.getRole());
     }
 
     public void logout(HttpServletResponse response) {

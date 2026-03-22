@@ -36,7 +36,13 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/api/auth/**").permitAll()
+
                         .requestMatchers(HttpMethod.GET, "/api/dish/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/dish/**").hasAnyAuthority("admin", "headAdmin")
+                        .requestMatchers(HttpMethod.PUT, "/api/dish/**").hasAnyAuthority("admin", "headAdmin")
+                        .requestMatchers(HttpMethod.DELETE, "/api/dish/**").hasAnyAuthority("admin", "headAdmin")
+
+
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(exception -> exception
