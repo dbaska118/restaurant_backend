@@ -41,7 +41,7 @@ public class DishService {
     }
 
     public List<Dish> readAllDishes() {
-        return dishRepository.findAll();
+        return dishRepository.findAllByOrderByIdAsc();
     }
     
 }

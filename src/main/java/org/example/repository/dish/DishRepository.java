@@ -9,5 +9,7 @@ import java.util.List;
 
 @Repository
 public interface DishRepository extends JpaRepository<Dish, Long> {
-    List<Dish> getDishesByDishType(DishType dishType);
+    List<Dish> findAllByOrderByIdAsc();
+
+
 }
