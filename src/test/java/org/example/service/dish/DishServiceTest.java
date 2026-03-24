@@ -1,5 +1,6 @@
 package org.example.service.dish;
 
+import org.example.exception.DishNotFoundException;
 import org.example.model.dish.Dish;
 import org.example.model.dish.DishType;
 import org.junit.jupiter.api.Assertions;
@@ -50,7 +51,7 @@ public class DishServiceTest {
         dishList = entityManager.getEntityManager().createQuery("select d from Dish d", Dish.class).getResultList();
         Assertions.assertTrue(dishList.isEmpty());
 
-        Assertions.assertThrows(RuntimeException.class, () -> dishService.deleteDish(null));
+        Assertions.assertThrows(DishNotFoundException.class, () -> dishService.deleteDish(-1L));
     }
 
     @Test
@@ -65,7 +66,7 @@ public class DishServiceTest {
         Assertions.assertEquals("Sok jabłkowy", dishDB.getName());
 
         dish.setDescription("500 ml");
-        Assertions.assertThrows(RuntimeException.class, () -> dishService.updateDish(null, dish));
+        Assertions.assertThrows(DishNotFoundException.class, () -> dishService.updateDish(-1L, dish));
     }
 
     @Test

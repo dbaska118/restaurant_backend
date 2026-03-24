@@ -1,5 +1,6 @@
 package org.example.service.dish;
 
+import org.example.exception.DishNotFoundException;
 import org.example.model.dish.Dish;
 import org.example.repository.dish.DishRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,7 @@ public class DishService {
 
     public Dish deleteDish(Long id)  {
         Dish dish = dishRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException());
+                .orElseThrow(DishNotFoundException::new);
        dishRepository.deleteById(id);
        return dish;
     }
@@ -37,7 +38,7 @@ public class DishService {
                   dishDB.setDishType(dish.getDishType());
                   return dishRepository.save(dishDB);
               })
-              .orElseThrow(() -> new RuntimeException());
+              .orElseThrow(DishNotFoundException::new);
     }
 
     public List<Dish> readAllDishes() {

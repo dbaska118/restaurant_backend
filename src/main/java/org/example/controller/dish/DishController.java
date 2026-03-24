@@ -1,5 +1,6 @@
 package org.example.controller.dish;
 
+import org.example.exception.DishNotFoundException;
 import org.example.model.dish.Dish;
 import org.example.service.dish.DishService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +38,7 @@ public class DishController {
         try {
             Dish dishDB = dishService.deleteDish(id);
             return new ResponseEntity<>(dishDB, HttpStatus.OK);
-        } catch (RuntimeException e) {
+        } catch (DishNotFoundException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
@@ -47,7 +48,7 @@ public class DishController {
         try {
             Dish dishDB = dishService.updateDish(id, dish);
             return new ResponseEntity<>(dishDB, HttpStatus.OK);
-        } catch (RuntimeException e) {
+        } catch (DishNotFoundException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
