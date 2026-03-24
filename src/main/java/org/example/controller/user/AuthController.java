@@ -2,8 +2,8 @@ package org.example.controller.user;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.example.model.user.AuthResponse;
-import org.example.model.user.LoginRequest;
+import org.example.dto.user.AuthResponse;
+import org.example.dto.user.LoginRequest;
 import org.example.model.user.User;
 import org.example.service.user.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;

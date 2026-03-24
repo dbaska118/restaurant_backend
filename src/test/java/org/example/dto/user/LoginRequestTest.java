@@ -1,4 +1,4 @@
-package org.example.model.user;
+package org.example.dto.user;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
