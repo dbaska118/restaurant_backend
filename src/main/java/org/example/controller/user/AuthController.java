@@ -4,6 +4,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.example.dto.user.AuthResponse;
 import org.example.dto.user.LoginRequest;
+import org.example.exception.EmailInUseException;
+import org.example.model.user.Client;
 import org.example.model.user.User;
 import org.example.service.user.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,15 +28,16 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody User user) {
-        if(!user.getRole().equals("client")) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        if(user instanceof Client) {
+            try {
+                user.setRole("client");
+                authService.register(user);
+                return new ResponseEntity<>(HttpStatus.CREATED);
+            } catch (EmailInUseException e) {
+                return new ResponseEntity<>(HttpStatus.CONFLICT);
+            }
         }
-        try {
-            authService.register(user);
-            return new ResponseEntity<>(HttpStatus.CREATED);
-        } catch (RuntimeException e) {
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
-        }
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     @PostMapping("/login")

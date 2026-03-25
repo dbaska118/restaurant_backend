@@ -4,7 +4,9 @@ import org.example.model.user.Admin;
 import org.example.model.user.Client;
 import org.example.model.user.Employee;
 import org.example.model.user.User;
+import org.springframework.stereotype.Component;
 
+@Component
 public class UserMapper {
 
     public UserDtoResponse fromUser(User user) {

@@ -7,6 +7,7 @@ import org.example.exception.NotClientException;
 import org.example.exception.UserNotFoundException;
 import org.example.model.user.Admin;
 import org.example.model.user.Client;
+import org.example.model.user.Employee;
 import org.example.model.user.User;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -15,6 +16,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -75,5 +78,38 @@ public class UserServiceTest {
             changePasswordRequest.setEmail("employee@wp.pl");
             userService.changePassword(changePasswordRequest);
         });
+    }
+
+    @Test
+    public void getAllUsersAdmin(){
+        User client = new Client("client@wp.pl", "password", "Jan", "Nowak");
+        User employee = new Employee("employee@wp.pl", "password", "Michał", "Kowal");
+        User admin = new Admin("admin@wp.pl", "password", "Tomasz", "Kowalski");
+
+        entityManager.persist(client);
+        entityManager.persist(employee);
+        entityManager.persist(admin);
+
+        List<User> users = userService.getAllUsersAdmin();
+        Assertions.assertEquals(2, users.size());
+        Assertions.assertEquals(client, users.get(0));
+        Assertions.assertEquals(employee, users.get(1));
+    }
+
+    @Test
+    public void getAllUsers(){
+        User client = new Client("client@wp.pl", "password", "Jan", "Nowak");
+        User employee = new Employee("employee@wp.pl", "password", "Michał", "Kowal");
+        User admin = new Admin("admin@wp.pl", "password", "Tomasz", "Kowalski");
+
+        entityManager.persist(client);
+        entityManager.persist(employee);
+        entityManager.persist(admin);
+
+        List<User> users = userService.getAllUsers();
+        Assertions.assertEquals(3, users.size());
+        Assertions.assertEquals(client, users.get(0));
+        Assertions.assertEquals(employee, users.get(1));
+        Assertions.assertEquals(admin, users.get(2));
     }
 }

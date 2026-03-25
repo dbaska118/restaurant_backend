@@ -1,6 +1,7 @@
 package org.example.service.user;
 
 import jakarta.persistence.EntityManager;
+import org.example.exception.EmailInUseException;
 import org.example.model.user.Admin;
 import org.example.model.user.User;
 import org.example.service.dish.DishService;
@@ -40,6 +41,6 @@ public class AuthServiceTest {
         Assertions.assertEquals(userList.get(0), admin);
 
 
-        Assertions.assertThrows(RuntimeException.class, () -> authService.register(admin2));
+        Assertions.assertThrows(EmailInUseException.class, () -> authService.register(admin2));
     }
 }

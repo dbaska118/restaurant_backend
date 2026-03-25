@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.example.JwtService;
 import org.example.dto.user.AuthResponse;
 import org.example.dto.user.LoginRequest;
+import org.example.exception.EmailInUseException;
 import org.example.model.user.User;
 import org.example.repository.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +41,7 @@ public class AuthService {
            userRepository.save(user);
        }
        catch (Exception e) {
-           throw new RuntimeException();
+           throw new EmailInUseException();
        }
     }
 
