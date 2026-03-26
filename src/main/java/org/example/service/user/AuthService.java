@@ -37,8 +37,11 @@ public class AuthService {
 
     public void register(User user) {
        try {
+           if(userRepository.findByEmail(user.getEmail()).isPresent()) {
+               throw new EmailInUseException();
+           }
            user.setPassword(passwordEncoder.encode(user.getPassword()));
-           userRepository.save(user);
+           userRepository.saveAndFlush(user);
        }
        catch (Exception e) {
            throw new EmailInUseException();

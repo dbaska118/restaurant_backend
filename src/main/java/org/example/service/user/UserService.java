@@ -54,7 +54,7 @@ public class UserService {
     }
 
     public List<User> getAllUsers() {
-        return userRepository.findAllByOrderByIdAsc();
+        return userRepository.findAllByRoleInOrderByIdAsc(List.of("client", "employee", "admin"));
     }
 
     public User deleteUser(Long id) {
