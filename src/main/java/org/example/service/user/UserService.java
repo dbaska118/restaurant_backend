@@ -1,9 +1,8 @@
 package org.example.service.user;
 
 import org.example.dto.user.ChangePasswordRequest;
-import org.example.exception.InvalidPasswordException;
-import org.example.exception.NotClientException;
-import org.example.exception.UserNotFoundException;
+import org.example.exception.*;
+import org.example.model.user.Admin;
 import org.example.model.user.Client;
 import org.example.model.user.User;
 import org.example.repository.user.UserRepository;
@@ -58,5 +57,45 @@ public class UserService {
         return userRepository.findAllByOrderByIdAsc();
     }
 
-    
+    public User deleteUser(Long id) {
+        User user = userRepository.findById(id).orElseThrow(UserNotFoundException::new);
+        if(user instanceof Admin) {
+            throw new IsAdminException();
+        }
+        userRepository.delete(user);
+        return user;
+    }
+
+    public User deleteAdmin(Long id) {
+        User user = userRepository.findById(id).orElseThrow(UserNotFoundException::new);
+        if(user instanceof Admin) {
+            userRepository.delete(user);
+            return user;
+        }
+        throw new NotAdminException();
+    }
+
+    public User updateUser(long id, User user) {
+        User userDB = userRepository.findById(id).orElseThrow(UserNotFoundException::new);
+        if(user instanceof Admin) {
+            throw new IsAdminException();
+        }
+
+        userDB.setFirstName(user.getFirstName());
+        userDB.setLastName(user.getLastName());
+        userDB.setPassword(passwordEncoder.encode(user.getPassword()));
+        userRepository.save(userDB);
+        return userDB;
+    }
+
+    public User updateAdmin(long id, User user) {
+        User userDB = userRepository.findById(id).orElseThrow(UserNotFoundException::new);
+        if(user instanceof Admin) {
+            userDB.setFirstName(user.getFirstName());
+            userDB.setLastName(user.getLastName());
+            userDB.setPassword(passwordEncoder.encode(user.getPassword()));
+            return user;
+        }
+        throw new NotAdminException();
+    }
 }
