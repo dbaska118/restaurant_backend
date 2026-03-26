@@ -2,6 +2,7 @@ package org.example.controller.user;
 
 
 import jakarta.persistence.EntityManager;
+import org.example.dto.user.ChangeNameRequest;
 import org.example.dto.user.ChangePasswordRequest;
 import org.example.dto.user.UserDtoResponse;
 import org.example.exception.UserNotFoundException;
@@ -18,6 +19,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.security.Principal;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -186,5 +189,36 @@ public class UserControllerTest {
 
         response = userController.updateAdmin(-1L, admin);
         Assertions.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+
+    @Test
+    public void changeNameTest(){
+        User client = new Client("client@wp.pl", "password", "Jan", "Nowak");
+        Principal principal = new Principal() {
+            @Override
+            public String getName() {
+                return "client@wp.pl";
+            }
+        };
+        ChangeNameRequest request = new ChangeNameRequest();
+        request.setFirstName("Jakub");
+        request.setLastName("Kowalski");
+        request.setEmail("client@wp.pl");
+
+        ResponseEntity<?> response = userController.changeName(request, principal);
+        Assertions.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+
+        entityManager.persist(client);
+        response = userController.changeName(request, principal);
+        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        Principal principal2 = new Principal() { @Override
+        public String getName() {
+            return "testt@wp.pl";
+        }
+        };
+
+        response = userController.changeName(request, principal2);
+        Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 }

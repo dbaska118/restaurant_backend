@@ -1,6 +1,7 @@
 package org.example.controller.user;
 
 
+import org.example.dto.user.ChangeNameRequest;
 import org.example.dto.user.ChangePasswordRequest;
 import org.example.dto.user.UserDtoResponse;
 import org.example.dto.user.UserMapper;
@@ -17,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 
@@ -46,6 +48,21 @@ public class UserController {
         }
         catch (NotClientException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("/changeName")
+    public ResponseEntity<?> changeName(@RequestBody ChangeNameRequest changeNameRequest, Principal principal) {
+        String email = principal.getName();
+        if(!email.equals(changeNameRequest.getEmail())) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        try {
+            userService.changeName(changeNameRequest);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        catch (UserNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
@@ -168,4 +185,6 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
+
+
 }

@@ -2,6 +2,7 @@ package org.example.service.user;
 
 import io.jsonwebtoken.lang.Assert;
 import jakarta.persistence.EntityManager;
+import org.example.dto.user.ChangeNameRequest;
 import org.example.dto.user.ChangePasswordRequest;
 import org.example.exception.*;
 import org.example.model.user.Admin;
@@ -204,5 +205,22 @@ public class UserServiceTest {
         Assertions.assertThrows(NotAdminException.class, () -> {
             userService.updateAdmin(employee.getId(), employee);
         });
+    }
+
+    @Test
+    public void changeNameTest(){
+        User employee = new Employee("employee@wp.pl", "password", "Michał", "Kowal");
+        entityManager.persist(employee);
+
+        ChangeNameRequest request = new ChangeNameRequest();
+        request.setFirstName("Anna");
+        request.setLastName("Kowalska");
+        request.setEmail("employee@wp.pl");
+
+        userService.changeName(request);
+        User employeeDB = entityManager.find(User.class, employee.getId());
+
+        Assertions.assertEquals("Anna", employeeDB.getFirstName());
+        Assertions.assertEquals("Kowalska", employeeDB.getLastName());
     }
 }

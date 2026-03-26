@@ -1,5 +1,6 @@
 package org.example.service.user;
 
+import org.example.dto.user.ChangeNameRequest;
 import org.example.dto.user.ChangePasswordRequest;
 import org.example.exception.*;
 import org.example.model.user.Admin;
@@ -97,5 +98,12 @@ public class UserService {
             return user;
         }
         throw new NotAdminException();
+    }
+
+    public void changeName(ChangeNameRequest changeNameRequest) {
+        User user = userRepository.findByEmail(changeNameRequest.getEmail()).orElseThrow(UserNotFoundException::new);
+        user.setFirstName(changeNameRequest.getFirstName());
+        user.setLastName(changeNameRequest.getLastName());
+        userRepository.save(user);
     }
 }
