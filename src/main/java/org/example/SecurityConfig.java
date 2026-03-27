@@ -40,6 +40,7 @@ public class SecurityConfig {
 
                         .requestMatchers("/api/user/balance/**").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/user/changePassword/**").authenticated()
+                        .requestMatchers("/api/user/name/**").authenticated()
                         .requestMatchers("/api/user/headAdmin/**").hasAnyAuthority("headAdmin")
                         .requestMatchers("/api/user/**").hasAnyAuthority("admin", "headAdmin")
 

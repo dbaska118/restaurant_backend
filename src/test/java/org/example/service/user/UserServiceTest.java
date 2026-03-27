@@ -4,6 +4,7 @@ import io.jsonwebtoken.lang.Assert;
 import jakarta.persistence.EntityManager;
 import org.example.dto.user.ChangeNameRequest;
 import org.example.dto.user.ChangePasswordRequest;
+import org.example.dto.user.NameResponse;
 import org.example.exception.*;
 import org.example.model.user.Admin;
 import org.example.model.user.Client;
@@ -222,5 +223,19 @@ public class UserServiceTest {
 
         Assertions.assertEquals("Anna", employeeDB.getFirstName());
         Assertions.assertEquals("Kowalska", employeeDB.getLastName());
+    }
+
+    @Test
+    public void getNameTest(){
+        User employee = new Employee("employee@wp.pl", "password", "Michał", "Kowal");
+        entityManager.persist(employee);
+
+        NameResponse nameResponse = userService.getName(employee.getEmail());
+        Assertions.assertEquals("Michał", nameResponse.getFirstName());
+        Assertions.assertEquals("Kowal", nameResponse.getLastName());
+
+        Assertions.assertThrows(UserNotFoundException.class, () -> {
+            userService.getName("test@wp.pl");
+        });
     }
 }

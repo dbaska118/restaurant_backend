@@ -4,6 +4,7 @@ package org.example.controller.user;
 import jakarta.persistence.EntityManager;
 import org.example.dto.user.ChangeNameRequest;
 import org.example.dto.user.ChangePasswordRequest;
+import org.example.dto.user.NameResponse;
 import org.example.dto.user.UserDtoResponse;
 import org.example.exception.UserNotFoundException;
 import org.example.model.user.Admin;
@@ -219,6 +220,31 @@ public class UserControllerTest {
         };
 
         response = userController.changeName(request, principal2);
+        Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+    @Test
+    public void getNameTest(){
+        User client = new Client("client@wp.pl", "password", "Jan", "Nowak");
+        Principal principal = new Principal() {
+            @Override
+            public String getName() {
+                return "client@wp.pl";
+            }
+        };
+        ResponseEntity<NameResponse> response = userController.getName("client@wp.pl", principal);
+        Assertions.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+
+        entityManager.persist(client);
+        response = userController.getName("client@wp.pl", principal);
+        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        Principal principal2 = new Principal() { @Override
+        public String getName() {
+            return "testt@wp.pl";
+        }
+        };
+        response = userController.getName("client@wp.pl", principal2);
         Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 }

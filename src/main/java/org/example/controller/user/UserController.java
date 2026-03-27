@@ -1,10 +1,7 @@
 package org.example.controller.user;
 
 
-import org.example.dto.user.ChangeNameRequest;
-import org.example.dto.user.ChangePasswordRequest;
-import org.example.dto.user.UserDtoResponse;
-import org.example.dto.user.UserMapper;
+import org.example.dto.user.*;
 import org.example.exception.*;
 import org.example.model.user.Admin;
 import org.example.model.user.Client;
@@ -51,7 +48,23 @@ public class UserController {
         }
     }
 
-    @PostMapping("/changeName")
+    @GetMapping("/name/{email}")
+    public ResponseEntity<NameResponse> getName(@PathVariable String email, Principal principal) {
+        String emailToken = principal.getName();
+        if(!email.equals(emailToken)) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        try {
+            NameResponse nameResponse = userService.getName(email);
+            return new ResponseEntity<>(nameResponse, HttpStatus.OK);
+        } catch (UserNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+
+
+    @PostMapping("/name")
     public ResponseEntity<?> changeName(@RequestBody ChangeNameRequest changeNameRequest, Principal principal) {
         String email = principal.getName();
         if(!email.equals(changeNameRequest.getEmail())) {
