@@ -4,7 +4,6 @@ import org.example.dto.reservation.OpeningHoursRequest;
 import org.example.exception.DayOfWeekNotFoundException;
 import org.example.exception.InvalidOpeningHoursException;
 import org.example.model.reservation.OpeningHours;
-import org.example.service.dish.DishService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +13,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -41,7 +39,7 @@ public class OpeningHoursServiceTest {
         entityManager.persist(monday);
         entityManager.persist(tuesday);
 
-        List<OpeningHours> openingHoursList = openingHoursService.getAllOpeningHours();
+        List<OpeningHours> openingHoursList = openingHoursService.readAllOpeningHours();
         Assertions.assertEquals(2, openingHoursList.size());
         Assertions.assertEquals(monday, openingHoursList.get(0));
         Assertions.assertEquals(tuesday, openingHoursList.get(1));

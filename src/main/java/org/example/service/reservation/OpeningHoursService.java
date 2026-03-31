@@ -20,7 +20,7 @@ public class OpeningHoursService {
         this.openingHoursRepository = openingHoursRepository;
     }
 
-    public List<OpeningHours> getAllOpeningHours() {
+    public List<OpeningHours> readAllOpeningHours() {
         return openingHoursRepository.findAllByOrderByDayOrderAsc();
     }
 

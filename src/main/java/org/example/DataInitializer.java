@@ -3,14 +3,19 @@ package org.example;
 import jakarta.annotation.PostConstruct;
 import org.example.model.dish.Dish;
 import org.example.model.dish.DishType;
+import org.example.model.reservation.OpeningHours;
 import org.example.model.user.Admin;
 import org.example.model.user.User;
+import org.example.repository.reservation.OpeningHoursRepository;
 import org.example.repository.user.UserRepository;
 import org.example.service.dish.DishService;
+import org.example.service.reservation.OpeningHoursService;
 import org.example.service.user.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
+
+import java.time.LocalTime;
 
 @Component
 @Profile("default")
@@ -19,12 +24,14 @@ public class DataInitializer {
     private final DishService dishService;
     private final UserRepository userRepository;
     private final AuthService authService;
+    private final OpeningHoursRepository openingHoursRepository;
 
     @Autowired
-    public DataInitializer(DishService dishService, UserRepository userRepository, AuthService authService) {
+    public DataInitializer(DishService dishService, UserRepository userRepository, AuthService authService, OpeningHoursRepository openingHoursRepository) {
         this.dishService = dishService;
         this.userRepository = userRepository;
         this.authService = authService;
+        this.openingHoursRepository = openingHoursRepository;
     }
 
     @PostConstruct
@@ -66,6 +73,25 @@ public class DataInitializer {
             User admin = new Admin("admin", "admin", "admin", "admin");
             admin.setRole("headAdmin");
             authService.register(admin);
+        }
+        if(openingHoursRepository.count() == 0){
+            LocalTime start = LocalTime.of(8,0);
+            LocalTime end = LocalTime.of(20,0);
+            OpeningHours monday = new OpeningHours("MONDAY", 1, start, end);
+            OpeningHours tuesday = new OpeningHours("TUESDAY", 2, start, end);
+            OpeningHours wednesday = new OpeningHours("WEDNESDAY", 3, start, end);
+            OpeningHours thursday = new OpeningHours("THURSDAY", 4, start, end);
+            OpeningHours friday = new OpeningHours("FRIDAY", 5, start, end);
+            OpeningHours saturday = new OpeningHours("SATURDAY", 6, start, end);
+            OpeningHours sunday = new OpeningHours("SUNDAY", 7, start, end);
+
+            openingHoursRepository.save(monday);
+            openingHoursRepository.save(tuesday);
+            openingHoursRepository.save(wednesday);
+            openingHoursRepository.save(thursday);
+            openingHoursRepository.save(friday);
+            openingHoursRepository.save(saturday);
+            openingHoursRepository.save(sunday);
         }
     }
 }
