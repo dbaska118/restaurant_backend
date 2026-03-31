@@ -9,13 +9,13 @@ import java.time.LocalTime;
 public class OpeningHours {
 
     @Id
-    private String DayOfWeek;
+    private String dayOfWeek;
     private int dayOrder;
     private LocalTime openTime;
     private LocalTime closeTime;
 
     public OpeningHours(String dayOfWeek, int dayOrder, LocalTime openTime, LocalTime closeTime) {
-        DayOfWeek = dayOfWeek;
+        this.dayOfWeek = dayOfWeek;
         this.dayOrder = dayOrder;
         this.openTime = openTime;
         this.closeTime = closeTime;
@@ -26,7 +26,7 @@ public class OpeningHours {
     }
 
     public void setDayOfWeek(String dayOfWeek) {
-        DayOfWeek = dayOfWeek;
+        this.dayOfWeek = dayOfWeek;
     }
 
     public void setOpenTime(LocalTime openTime) {
@@ -38,7 +38,7 @@ public class OpeningHours {
     }
 
     public String getDayOfWeek() {
-        return DayOfWeek;
+        return dayOfWeek;
     }
 
     public LocalTime getOpenTime() {
