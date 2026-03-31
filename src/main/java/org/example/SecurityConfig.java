@@ -47,6 +47,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/dish/**").permitAll()
                         .requestMatchers("/api/dish/**").hasAnyAuthority("admin", "headAdmin")
 
+                        .requestMatchers(HttpMethod.GET, "/api/openingHours/**").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/api/openingHours/**").hasAnyAuthority("admin", "headAdmin")
+
 
 
                         .anyRequest().authenticated()
