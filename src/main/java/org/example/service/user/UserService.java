@@ -85,7 +85,9 @@ public class UserService {
 
         userDB.setFirstName(user.getFirstName());
         userDB.setLastName(user.getLastName());
-        userDB.setPassword(passwordEncoder.encode(user.getPassword()));
+        if(user.getPassword() != null) {
+            userDB.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
         userRepository.save(userDB);
         return userDB;
     }
@@ -95,7 +97,9 @@ public class UserService {
         if(user instanceof Admin) {
             userDB.setFirstName(user.getFirstName());
             userDB.setLastName(user.getLastName());
-            userDB.setPassword(passwordEncoder.encode(user.getPassword()));
+            if(user.getPassword() != null) {
+                userDB.setPassword(passwordEncoder.encode(user.getPassword()));
+            }
             return user;
         }
         throw new NotAdminException();
