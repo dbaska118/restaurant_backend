@@ -44,6 +44,8 @@ public abstract class User implements UserDetails {
 
     private String role;
 
+    private boolean enabled = true;
+
     public User() {
     }
 
@@ -120,7 +122,11 @@ public abstract class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return this.enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     @Override

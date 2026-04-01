@@ -53,8 +53,13 @@ public class UserRepositoryTest {
         entityManager.persist(admin);
         entityManager.persist(employee);
 
-        List<User> userList = userRepository.findAllByRoleInOrderByIdAsc(List.of("admin"));
+        List<User> userList = userRepository.findAllByEnabledTrueAndRoleInOrderByIdAsc(List.of("admin"));
         Assertions.assertEquals(1, userList.size());
         Assertions.assertEquals(userList.get(0), admin);
+
+        admin.setEnabled(false);
+        entityManager.persist(admin);
+        userList = userRepository.findAllByEnabledTrueAndRoleInOrderByIdAsc(List.of("admin"));
+        Assertions.assertEquals(0, userList.size());
     }
 }

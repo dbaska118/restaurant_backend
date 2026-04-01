@@ -13,6 +13,7 @@ public class UserTest {
         Assertions.assertEquals("Jan", user.getFirstName());
         Assertions.assertEquals("Nowak", user.getLastName());
         Assertions.assertEquals("admin", user.getRole());
+        Assertions.assertTrue(user.isEnabled());
     }
 
     @Test
@@ -23,12 +24,14 @@ public class UserTest {
         user.setFirstName("Jan");
         user.setLastName("Nowak");
         user.setRole("role");
+        user.setEnabled(false);
 
         Assertions.assertEquals("admin@wp.pl", user.getEmail());
         Assertions.assertEquals("password", user.getPassword());
         Assertions.assertEquals("Jan", user.getFirstName());
         Assertions.assertEquals("Nowak", user.getLastName());
         Assertions.assertEquals("role", user.getRole());
+        Assertions.assertFalse(user.isEnabled());
 
     }
 }

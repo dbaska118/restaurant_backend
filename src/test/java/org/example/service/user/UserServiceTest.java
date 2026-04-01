@@ -36,7 +36,6 @@ public class UserServiceTest {
     @Autowired
     PasswordEncoder passwordEncoder;
 
-
     @Test
     public void getBalanceTest(){
         User client = new Client("client@wp.pl", "password", "Jan", "Nowak");
@@ -124,7 +123,10 @@ public class UserServiceTest {
         entityManager.persist(admin);
 
         userService.deleteUser(employee.getId());
-        List<User> users = entityManager.createQuery("select u from User u", User.class).getResultList();
+        List<User> users = entityManager.createQuery(
+                "select u from User u where u.enabled = true",
+                User.class
+        ).getResultList();
         Assertions.assertEquals(1, users.size());
         Assertions.assertEquals(admin, users.get(0));
 
@@ -145,7 +147,10 @@ public class UserServiceTest {
         entityManager.persist(admin);
 
         userService.deleteAdmin(admin.getId());
-        List<User> users = entityManager.createQuery("select u from User u", User.class).getResultList();
+        List<User> users = entityManager.createQuery(
+                "select u from User u where u.enabled = true",
+                User.class
+        ).getResultList();
         Assertions.assertEquals(1, users.size());
         Assertions.assertEquals(employee, users.get(0));
 

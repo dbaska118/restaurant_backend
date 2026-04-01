@@ -52,11 +52,11 @@ public class UserService {
     }
 
     public List<User> getAllUsersAdmin() {
-        return userRepository.findAllByRoleInOrderByIdAsc(List.of("client", "employee"));
+        return userRepository.findAllByEnabledTrueAndRoleInOrderByIdAsc(List.of("client", "employee"));
     }
 
     public List<User> getAllUsers() {
-        return userRepository.findAllByRoleInOrderByIdAsc(List.of("client", "employee", "admin"));
+        return userRepository.findAllByEnabledTrueAndRoleInOrderByIdAsc(List.of("client", "employee", "admin"));
     }
 
     public User deleteUser(Long id) {
@@ -64,14 +64,16 @@ public class UserService {
         if(user instanceof Admin) {
             throw new IsAdminException();
         }
-        userRepository.delete(user);
+        user.setEnabled(false);
+        userRepository.save(user);
         return user;
     }
 
     public User deleteAdmin(Long id) {
         User user = userRepository.findById(id).orElseThrow(UserNotFoundException::new);
         if(user instanceof Admin) {
-            userRepository.delete(user);
+            user.setEnabled(false);
+            userRepository.save(user);
             return user;
         }
         throw new NotAdminException();
