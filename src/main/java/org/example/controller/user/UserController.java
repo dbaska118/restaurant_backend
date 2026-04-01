@@ -16,6 +16,7 @@ import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -94,13 +95,23 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<List<User>> getUsers() {
-        return new ResponseEntity<>(userService.getAllUsersAdmin(), HttpStatus.OK);
+    public ResponseEntity<List<UserDtoResponse>> getUsers() {
+        List<User> userList = userService.getAllUsersAdmin();
+        List<UserDtoResponse> responseList = new ArrayList<>();
+        for (User user : userList) {
+            responseList.add(userMapper.fromUser(user));
+        }
+        return new ResponseEntity<>(responseList, HttpStatus.OK);
     }
 
     @GetMapping("/headAdmin")
-    public ResponseEntity<List<User>> getAllUsers() {
-        return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
+    public ResponseEntity<List<UserDtoResponse>> getAllUsers() {
+       List<User> userList = userService.getAllUsers();
+        List<UserDtoResponse> responseList = new ArrayList<>();
+        for (User user : userList) {
+            responseList.add(userMapper.fromUser(user));
+        }
+        return new ResponseEntity<>(responseList, HttpStatus.OK);
     }
 
     @PostMapping
