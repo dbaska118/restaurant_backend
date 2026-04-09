@@ -1,6 +1,7 @@
 package org.example.service.reservation;
 
 import jakarta.persistence.EntityManager;
+import org.example.dto.reservation.AddBalanceRequest;
 import org.example.exception.NotClientException;
 import org.example.exception.UserNotFoundException;
 import org.example.model.reservation.BalanceOperation;
@@ -58,7 +59,34 @@ public class BalanceOperationServiceTest {
         Assertions.assertThrows(NotClientException.class, ()->{
             balanceOperationService.geAllOperationsByEmail(admin.getEmail());
         });
+    }
 
+    @Test
+    public void addFundsTest(){
+        User client = new Client("user@wp.pl", "password", "Jan", "Nowak");
+        User admin = new Admin("admin@wp.pl", "password", "Tomasz", "Kowal");
+        entityManager.persist(client);
+        entityManager.persist(admin);
+
+
+        AddBalanceRequest addBalanceRequest = new AddBalanceRequest("user@wp.pl", 100);
+        BalanceOperation balanceOperation = balanceOperationService.addBalance(addBalanceRequest);
+        Assertions.assertEquals(client, balanceOperation.getUser());
+        Assertions.assertEquals(100, balanceOperation.getAmount());
+        Assertions.assertEquals(0, balanceOperation.getBalance_before());
+        Assertions.assertEquals(100, balanceOperation.getBalance_after());
+        Assertions.assertEquals(BalanceOperationType.ADD_FUNDS, balanceOperation.getOperationType());
+
+
+        Assertions.assertThrows(UserNotFoundException.class, ()->{
+           AddBalanceRequest notfoundBalanceRequest = new AddBalanceRequest("test@wp.pl", 100);
+           BalanceOperation balanceOperation1 = balanceOperationService.addBalance(notfoundBalanceRequest);
+        });
+
+        Assertions.assertThrows(NotClientException.class, ()->{
+            AddBalanceRequest adminBalanceRequest = new AddBalanceRequest("admin@wp.pl", 50);
+            BalanceOperation balanceOperation2 = balanceOperationService.addBalance(adminBalanceRequest);
+        });
     }
 
 }
