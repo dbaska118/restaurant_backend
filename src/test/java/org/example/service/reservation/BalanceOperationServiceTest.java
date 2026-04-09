@@ -77,6 +77,9 @@ public class BalanceOperationServiceTest {
         Assertions.assertEquals(100, balanceOperation.getBalanceAfter());
         Assertions.assertEquals(BalanceOperationType.ADD_FUNDS, balanceOperation.getOperationType());
 
+        Client clientDB = entityManager.find(Client.class, client.getId());
+        Assertions.assertEquals(100, clientDB.getBalance());
+
 
         Assertions.assertThrows(UserNotFoundException.class, ()->{
            AddBalanceRequest notfoundBalanceRequest = new AddBalanceRequest("test@wp.pl", 100);

@@ -47,6 +47,15 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/dish/**").permitAll()
                         .requestMatchers("/api/dish/**").hasAnyAuthority("admin", "headAdmin")
 
+                        .requestMatchers(HttpMethod.GET, "/api/tablePrice/**").permitAll()
+                        .requestMatchers("/api/tablePrice/**").hasAnyAuthority("admin", "headAdmin")
+
+                        .requestMatchers(HttpMethod.GET, "/api/restaurantTable/**").permitAll()
+                        .requestMatchers("/api/restaurantTable/**").hasAnyAuthority("admin", "headAdmin")
+
+                        .requestMatchers(HttpMethod.POST, "/api/balanceOperation/employee/**").hasAnyAuthority("employee")
+                        .requestMatchers("api/balanceOperation/**").hasAnyAuthority("client")
+
                         .requestMatchers(HttpMethod.GET, "/api/openingHours/**").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/api/openingHours/**").hasAnyAuthority("admin", "headAdmin")
 

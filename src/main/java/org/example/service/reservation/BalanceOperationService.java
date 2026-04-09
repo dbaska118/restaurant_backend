@@ -51,6 +51,8 @@ public class BalanceOperationService {
                     balanceBefore + addBalanceRequest.getAmount(),
                     BalanceOperationType.ADD_FUNDS
             );
+            ((Client) user).setBalance(balanceBefore + addBalanceRequest.getAmount());
+            userRepository.save(user);
             return balanceOperationRepository.save(balanceOperation);
         }
         throw new NotClientException();
