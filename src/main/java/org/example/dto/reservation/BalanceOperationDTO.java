@@ -1,19 +1,14 @@
-package org.example.model.reservation;
+package org.example.dto.reservation;
 
-import jakarta.persistence.*;
-import org.example.model.user.User;
+import org.example.model.reservation.BalanceOperationType;
 
 import java.time.LocalDateTime;
 
-@Entity
-public class BalanceOperation {
+public class BalanceOperationDTO {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private long id;
 
-    @ManyToOne
-    private User user;
+    private String email;
 
     private LocalDateTime operationDate;
 
@@ -25,11 +20,9 @@ public class BalanceOperation {
 
     private BalanceOperationType operationType;
 
-    public BalanceOperation() {
-    }
-
-    public BalanceOperation(User user, LocalDateTime operationDate, double amount, double balanceBefore, double balanceAfter, BalanceOperationType operationType) {
-        this.user = user;
+    public BalanceOperationDTO(long id, String email, LocalDateTime operationDate, double amount, double balanceBefore, double balanceAfter, BalanceOperationType operationType) {
+        this.id = id;
+        this.email = email;
         this.operationDate = operationDate;
         this.amount = amount;
         this.balanceBefore = balanceBefore;
@@ -37,12 +30,12 @@ public class BalanceOperation {
         this.operationType = operationType;
     }
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
-    public User getUser() {
-        return user;
+    public String getEmail() {
+        return email;
     }
 
     public LocalDateTime getOperationDate() {

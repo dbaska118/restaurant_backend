@@ -25,8 +25,8 @@ public class BalanceOperationTest {
         Assertions.assertEquals(client, balanceOperation.getUser());
         Assertions.assertEquals(now, balanceOperation.getOperationDate());
         Assertions.assertEquals(-50, balanceOperation.getAmount());
-        Assertions.assertEquals(100, balanceOperation.getBalance_before());
-        Assertions.assertEquals(50, balanceOperation.getBalance_after());
+        Assertions.assertEquals(100, balanceOperation.getBalanceBefore());
+        Assertions.assertEquals(50, balanceOperation.getBalanceAfter());
         Assertions.assertEquals(BalanceOperationType.ADD_FUNDS, balanceOperation.getOperationType());
     }
 }

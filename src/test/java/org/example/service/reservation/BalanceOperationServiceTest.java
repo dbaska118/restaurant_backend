@@ -73,8 +73,8 @@ public class BalanceOperationServiceTest {
         BalanceOperation balanceOperation = balanceOperationService.addBalance(addBalanceRequest);
         Assertions.assertEquals(client, balanceOperation.getUser());
         Assertions.assertEquals(100, balanceOperation.getAmount());
-        Assertions.assertEquals(0, balanceOperation.getBalance_before());
-        Assertions.assertEquals(100, balanceOperation.getBalance_after());
+        Assertions.assertEquals(0, balanceOperation.getBalanceBefore());
+        Assertions.assertEquals(100, balanceOperation.getBalanceAfter());
         Assertions.assertEquals(BalanceOperationType.ADD_FUNDS, balanceOperation.getOperationType());
 
 
