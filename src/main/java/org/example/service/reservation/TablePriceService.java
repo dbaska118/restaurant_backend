@@ -59,4 +59,8 @@ public class TablePriceService {
         })
                 .orElseThrow(TablePriceNotFoundException::new);
     }
+
+    public List<Integer> getPossibleNumberOfChairs(){
+        return tablePriceRepository.getPossibleNumberOfChairs();
+    }
 }

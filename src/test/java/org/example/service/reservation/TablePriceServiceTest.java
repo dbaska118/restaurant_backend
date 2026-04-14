@@ -89,6 +89,18 @@ public class TablePriceServiceTest {
 
         tablePrice.setPrice(100);
         Assertions.assertThrows(TablePriceNotFoundException.class, () -> tablePriceService.updateTablePrice(-1, tablePrice));
+    }
 
+    @Test
+    public void getPossibleNumberOfChairs(){
+        TablePrice tablePrice = new TablePrice(7, 30);
+        TablePrice tablePrice2 = new TablePrice(4, 50);
+        entityManager.persist(tablePrice);
+        entityManager.persist(tablePrice2);
+
+        List<Integer> possibleNumberOfChairs = tablePriceService.getPossibleNumberOfChairs();
+        Assertions.assertEquals(2, possibleNumberOfChairs.size());
+        Assertions.assertEquals(4, possibleNumberOfChairs.get(0));
+        Assertions.assertEquals(7, possibleNumberOfChairs.get(1));
     }
 }

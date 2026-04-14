@@ -65,4 +65,10 @@ public class TablePriceController {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
     }
+
+    @GetMapping("/possibleNumberOfChairs")
+    public ResponseEntity<List<Integer>> getPossibleNumberOfChairs() {
+        List<Integer> response = tablePriceService.getPossibleNumberOfChairs();
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 }

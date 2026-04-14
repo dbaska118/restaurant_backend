@@ -1,6 +1,7 @@
 package org.example.controller.reservation;
 
 import jakarta.persistence.EntityManager;
+import org.apache.coyote.Response;
 import org.example.model.reservation.RestaurantTable;
 import org.example.model.reservation.TablePrice;
 import org.junit.jupiter.api.Assertions;
@@ -79,5 +80,17 @@ public class TablePriceControllerTest {
         Assertions.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
 
 
+    }
+
+    @Test
+    public void getPossibleNumberOfChairs(){
+        TablePrice tablePrice = new TablePrice(7, 30);
+        TablePrice tablePrice2 = new TablePrice(4, 50);
+        entityManager.persist(tablePrice);
+        entityManager.persist(tablePrice2);
+
+        ResponseEntity<List<Integer>> response = tablePriceController.getPossibleNumberOfChairs();
+        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+        Assertions.assertEquals(2, response.getBody().size());
     }
 }
