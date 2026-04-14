@@ -18,7 +18,6 @@ import java.util.List;
 public class TablePriceController {
 
     private final TablePriceService tablePriceService;
-    private int numberOfChairs;
 
     @Autowired
     public TablePriceController(TablePriceService tablePriceService) {

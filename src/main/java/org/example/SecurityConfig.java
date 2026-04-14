@@ -54,7 +54,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/restaurantTable/**").hasAnyAuthority("admin", "headAdmin")
 
                         .requestMatchers(HttpMethod.POST, "/api/balanceOperation/employee/**").hasAnyAuthority("employee")
-                        .requestMatchers("api/balanceOperation/**").hasAnyAuthority("client")
+                        .requestMatchers("/api/balanceOperation/**").hasAnyAuthority("client")
 
                         .requestMatchers(HttpMethod.GET, "/api/openingHours/**").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/api/openingHours/**").hasAnyAuthority("admin", "headAdmin")

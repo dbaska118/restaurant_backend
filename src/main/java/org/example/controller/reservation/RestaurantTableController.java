@@ -31,8 +31,8 @@ public class RestaurantTableController {
     @PostMapping
     public ResponseEntity<RestaurantTable> createRestaurantTable(@RequestBody RestaurantTable restaurantTable) {
         try {
-            restaurantTableService.createRestaurantTable(restaurantTable);
-            return new ResponseEntity<>(restaurantTable, HttpStatus.CREATED);
+            RestaurantTable response = restaurantTableService.createRestaurantTable(restaurantTable);
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
         }
         catch (TablePriceNotFoundException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -42,8 +42,8 @@ public class RestaurantTableController {
     @PutMapping("/{id}")
     public ResponseEntity<RestaurantTable> updateRestaurantTable(@PathVariable long id, @RequestBody RestaurantTable restaurantTable) {
         try {
-            restaurantTableService.updateRestaurantTable(id, restaurantTable);
-            return new ResponseEntity<>(restaurantTable, HttpStatus.OK);
+            RestaurantTable response = restaurantTableService.updateRestaurantTable(id, restaurantTable);
+            return new ResponseEntity<>(response, HttpStatus.OK);
         }
         catch (TablePriceNotFoundException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
