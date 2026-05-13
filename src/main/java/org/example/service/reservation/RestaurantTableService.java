@@ -47,6 +47,7 @@ public class RestaurantTableService {
         return restaurantTableRepository.findById(id).map(restaurantTableDB -> {
             restaurantTableDB.setName(restaurantTable.getName());
             restaurantTableDB.setNumberOfChairs(restaurantTable.getNumberOfChairs());
+            restaurantTableDB.setVersion(restaurantTable.getVersion());
             return restaurantTableRepository.save(restaurantTableDB);
         })
                 .orElseThrow(RestaurantTableNotFoundException::new);

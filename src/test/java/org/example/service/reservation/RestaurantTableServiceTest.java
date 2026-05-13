@@ -2,6 +2,7 @@ package org.example.service.reservation;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Table;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import org.example.exception.RestaurantTableNotFoundException;
 import org.example.exception.TablePriceNotFoundException;
 import org.example.model.reservation.RestaurantTable;
@@ -92,6 +93,7 @@ public class RestaurantTableServiceTest {
         RestaurantTable restaurantTableDB = restaurantTableService.updateRestaurantTable(restaurantTable.getId(), restaurantTable);
         Assertions.assertEquals("Stolik 2", restaurantTableDB.getName());
         Assertions.assertEquals(2, restaurantTableDB.getNumberOfChairs());
+        Assertions.assertEquals(0, restaurantTableDB.getVersion());
 
         Assertions.assertThrows(RestaurantTableNotFoundException.class, () -> {
             restaurantTableService.updateRestaurantTable(-1L, restaurantTable);

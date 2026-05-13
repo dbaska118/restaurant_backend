@@ -15,14 +15,21 @@ public class RestaurantTable {
 
     private boolean active;
 
+    private RestaurantTableStatus status;
+
+    @Version
+    private Integer version;
+
     public RestaurantTable() {
         this.active = true;
+        this.status = RestaurantTableStatus.FREE;
     }
 
     public RestaurantTable(String name, int numberOfChairs) {
         this.active = true;
         this.name = name;
         this.numberOfChairs = numberOfChairs;
+        this.status = RestaurantTableStatus.FREE;
     }
 
     public Long getId() {
@@ -51,5 +58,21 @@ public class RestaurantTable {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public RestaurantTableStatus getStatus() {
+        return status;
+    }
+
+    public Integer getVersion() {
+        return version;
+    }
+
+    public void setStatus(RestaurantTableStatus status) {
+        this.status = status;
+    }
+
+    public void setVersion(Integer version) {
+        this.version = version;
     }
 }
