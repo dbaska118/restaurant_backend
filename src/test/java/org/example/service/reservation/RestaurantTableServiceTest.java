@@ -3,10 +3,14 @@ package org.example.service.reservation;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Table;
 import jakarta.persistence.criteria.CriteriaBuilder;
+import org.example.dto.reservation.RestaurantTableStatusRequest;
 import org.example.exception.RestaurantTableNotFoundException;
+import org.example.exception.RestaurantTableStateConflict;
 import org.example.exception.TablePriceNotFoundException;
 import org.example.model.reservation.RestaurantTable;
+import org.example.model.reservation.RestaurantTableStatus;
 import org.example.model.reservation.TablePrice;
+import org.example.repository.reservation.RestaurantTableRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +19,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -26,6 +31,9 @@ public class RestaurantTableServiceTest {
 
     @Autowired
     private EntityManager entityManager;
+
+    @Autowired
+    private RestaurantTableRepository restaurantTableRepository;
 
     @Test
     public void createTest(){
@@ -93,10 +101,41 @@ public class RestaurantTableServiceTest {
         RestaurantTable restaurantTableDB = restaurantTableService.updateRestaurantTable(restaurantTable.getId(), restaurantTable);
         Assertions.assertEquals("Stolik 2", restaurantTableDB.getName());
         Assertions.assertEquals(2, restaurantTableDB.getNumberOfChairs());
-        Assertions.assertEquals(0, restaurantTableDB.getVersion());
+        Assertions.assertEquals(1, restaurantTableDB.getVersion());
 
         Assertions.assertThrows(RestaurantTableNotFoundException.class, () -> {
             restaurantTableService.updateRestaurantTable(-1L, restaurantTable);
         });
+
+        entityManager.clear();
+        restaurantTable.setVersion(100);
+        Assertions.assertThrows(RestaurantTableStateConflict.class, () -> {
+            restaurantTableService.updateRestaurantTable(restaurantTable.getId(), restaurantTable);
+        });
+
+
     }
+
+    @Test
+    public void updateStatusTest(){
+        TablePrice tablePrice = new TablePrice(2, 89);
+        RestaurantTable restaurantTable = new RestaurantTable("Stolik 1", 3);
+        entityManager.persist(tablePrice);
+        entityManager.persist(restaurantTable);
+
+        RestaurantTableStatusRequest request = new RestaurantTableStatusRequest(restaurantTable.getId(), restaurantTable.getVersion(), RestaurantTableStatus.OCCUPIED);
+        RestaurantTable db = restaurantTableService.updateStatus(restaurantTable.getId(), request);
+        Assertions.assertEquals(RestaurantTableStatus.OCCUPIED, db.getStatus());
+
+        request.setStatus(RestaurantTableStatus.FREE);
+        request.setVersion(100);
+        Assertions.assertThrows(RestaurantTableStateConflict.class, () -> {
+            restaurantTableService.updateStatus(restaurantTable.getId(), request);
+        });
+
+        Assertions.assertThrows(RestaurantTableNotFoundException.class, () -> {
+            restaurantTableService.updateStatus(-1L, request);
+        });
+    }
+
 }

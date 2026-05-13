@@ -1,6 +1,8 @@
 package org.example.service.reservation;
 
+import org.example.dto.reservation.RestaurantTableStatusRequest;
 import org.example.exception.RestaurantTableNotFoundException;
+import org.example.exception.RestaurantTableStateConflict;
 import org.example.exception.TablePriceNotFoundException;
 import org.example.model.reservation.RestaurantTable;
 import org.example.model.reservation.TablePrice;
@@ -45,11 +47,47 @@ public class RestaurantTableService {
         TablePrice tablePrice = tablePriceRepository.findByNumberOfChairs(restaurantTable.getNumberOfChairs()).orElseThrow(TablePriceNotFoundException::new);
 
         return restaurantTableRepository.findById(id).map(restaurantTableDB -> {
+
+            if (!restaurantTableDB.getVersion().equals(restaurantTable.getVersion())) {
+                throw new RestaurantTableStateConflict();
+            }
+
             restaurantTableDB.setName(restaurantTable.getName());
             restaurantTableDB.setNumberOfChairs(restaurantTable.getNumberOfChairs());
-            restaurantTableDB.setVersion(restaurantTable.getVersion());
-            return restaurantTableRepository.save(restaurantTableDB);
-        })
-                .orElseThrow(RestaurantTableNotFoundException::new);
+            try {
+                RestaurantTable saved = restaurantTableRepository.save(restaurantTableDB);
+                restaurantTableRepository.flush();
+                return saved;
+            } catch (Exception e) {
+                throw new RestaurantTableStateConflict();
+            }
+        }).orElseThrow(RestaurantTableNotFoundException::new);
     }
+
+    @Transactional
+    public RestaurantTable updateStatus(long id, RestaurantTableStatusRequest request) {
+
+        RestaurantTable restaurantTableDB = restaurantTableRepository.findById(id)
+                .orElseThrow(RestaurantTableNotFoundException::new);
+
+        if(!restaurantTableDB.getVersion().equals(request.getVersion())) {
+            throw new RestaurantTableStateConflict();
+        }
+
+        if (restaurantTableDB.getStatus() == request.getStatus()) {
+            return restaurantTableDB;
+        }
+
+        restaurantTableDB.setStatus(request.getStatus());
+
+        try {
+            RestaurantTable saved = restaurantTableRepository.save(restaurantTableDB);
+            restaurantTableRepository.flush();
+            return saved;
+        } catch (Exception e) {
+            throw new RestaurantTableStateConflict();
+        }
+    }
+
+
 }
