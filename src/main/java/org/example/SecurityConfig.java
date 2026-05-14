@@ -51,6 +51,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/tablePrice/**").hasAnyAuthority("admin", "headAdmin")
 
                         .requestMatchers(HttpMethod.GET, "/api/restaurantTable/**").permitAll()
+                        .requestMatchers(HttpMethod.PATCH, "/api/restaurantTable/**").hasAnyAuthority("employee")
                         .requestMatchers("/api/restaurantTable/**").hasAnyAuthority("admin", "headAdmin")
 
                         .requestMatchers(HttpMethod.POST, "/api/balanceOperation/employee/**").hasAnyAuthority("employee")
