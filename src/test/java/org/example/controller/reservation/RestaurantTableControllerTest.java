@@ -3,7 +3,9 @@ package org.example.controller.reservation;
 import io.jsonwebtoken.lang.Assert;
 import jakarta.persistence.EntityManager;
 import org.checkerframework.checker.units.qual.A;
+import org.example.dto.reservation.RestaurantTableStatusRequest;
 import org.example.model.reservation.RestaurantTable;
+import org.example.model.reservation.RestaurantTableStatus;
 import org.example.model.reservation.TablePrice;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -78,6 +80,27 @@ public class RestaurantTableControllerTest {
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
 
         response = restaurantTableController.deleteRestaurantTable(-1L);
+        Assertions.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+
+    @Test
+    public void updateStatusTest(){
+        TablePrice tablePrice = new TablePrice(5, 120);
+        RestaurantTable restaurantTable = new RestaurantTable("Stolik 1", 7);
+        entityManager.persist(restaurantTable);
+        entityManager.persist(tablePrice);
+
+        RestaurantTableStatusRequest request = new RestaurantTableStatusRequest(restaurantTable.getId(), 0, RestaurantTableStatus.OCCUPIED);
+        ResponseEntity<RestaurantTable> response = restaurantTableController.updateRestaurantTableStatus(restaurantTable.getId(), request);
+        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+        Assertions.assertEquals(restaurantTable, response.getBody());
+
+        request.setStatus(RestaurantTableStatus.FREE);
+        request.setVersion(100);
+        response = restaurantTableController.updateRestaurantTableStatus(restaurantTable.getId(), request);
+        Assertions.assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
+
+        response = restaurantTableController.updateRestaurantTableStatus(-1L, request);
         Assertions.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 }

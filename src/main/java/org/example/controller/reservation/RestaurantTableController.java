@@ -1,6 +1,8 @@
 package org.example.controller.reservation;
 
+import org.example.dto.reservation.RestaurantTableStatusRequest;
 import org.example.exception.RestaurantTableNotFoundException;
+import org.example.exception.RestaurantTableStateConflict;
 import org.example.exception.TablePriceNotFoundException;
 import org.example.model.reservation.RestaurantTable;
 import org.example.service.reservation.RestaurantTableService;
@@ -50,6 +52,8 @@ public class RestaurantTableController {
         }
         catch (RestaurantTableNotFoundException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (RestaurantTableStateConflict e) {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
     }
 
@@ -61,6 +65,20 @@ public class RestaurantTableController {
         }
         catch (RestaurantTableNotFoundException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<RestaurantTable> updateRestaurantTableStatus(@PathVariable long id, @RequestBody RestaurantTableStatusRequest request) {
+        try {
+            RestaurantTable restaurantTable = restaurantTableService.updateStatus(id, request);
+            return new ResponseEntity<>(restaurantTable, HttpStatus.OK);
+        }
+        catch (RestaurantTableNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        catch (RestaurantTableStateConflict e) {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
     }
 
