@@ -28,7 +28,7 @@ public class RestaurantTableService {
 
     @Transactional
     public RestaurantTable createRestaurantTable(RestaurantTable restaurantTable) {
-        TablePrice tablePrice = tablePriceRepository.findByNumberOfChairs(restaurantTable.getNumberOfChairs()).orElseThrow(TablePriceNotFoundException::new);
+        TablePrice tablePrice = tablePriceRepository.findWithLockByNumberOfChairs(restaurantTable.getNumberOfChairs()).orElseThrow(TablePriceNotFoundException::new);
         return restaurantTableRepository.save(restaurantTable);
     }
 
@@ -44,7 +44,7 @@ public class RestaurantTableService {
 
     @Transactional
     public RestaurantTable updateRestaurantTable(long id, RestaurantTable restaurantTable) {
-        TablePrice tablePrice = tablePriceRepository.findByNumberOfChairs(restaurantTable.getNumberOfChairs()).orElseThrow(TablePriceNotFoundException::new);
+        TablePrice tablePrice = tablePriceRepository.findWithLockByNumberOfChairs(restaurantTable.getNumberOfChairs()).orElseThrow(TablePriceNotFoundException::new);
 
         return restaurantTableRepository.findById(id).map(restaurantTableDB -> {
 

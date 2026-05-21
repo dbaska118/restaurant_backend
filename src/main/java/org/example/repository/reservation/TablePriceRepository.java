@@ -12,10 +12,12 @@ import java.util.Optional;
 public interface TablePriceRepository extends JpaRepository<TablePrice, Long> {
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
-    public Optional<TablePrice> findByNumberOfChairs(int numberOfChairs);
+    public Optional<TablePrice> findWithLockByNumberOfChairs(int numberOfChairs);
 
     public List<TablePrice> findAllByOrderByNumberOfChairsAsc();
 
     @Query("SELECT tp.numberOfChairs from TablePrice tp ORDER BY tp.numberOfChairs ASC ")
     public List<Integer> getPossibleNumberOfChairs();
+
+    public Optional<TablePrice> findByNumberOfChairs(int numberOfChairs);
 }

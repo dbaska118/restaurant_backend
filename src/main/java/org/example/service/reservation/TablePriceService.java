@@ -1,6 +1,5 @@
 package org.example.service.reservation;
 
-import org.example.exception.DishNotFoundException;
 import org.example.exception.TablePriceExistException;
 import org.example.exception.TablePriceNotFoundException;
 import org.example.exception.TablesExistException;
@@ -42,7 +41,7 @@ public class TablePriceService {
 
     @Transactional
     public TablePrice deleteTablePrice(int numberOfChairs){
-        TablePrice tablePrice = tablePriceRepository.findByNumberOfChairs(numberOfChairs).orElseThrow(TablePriceNotFoundException::new);
+        TablePrice tablePrice = tablePriceRepository.findWithLockByNumberOfChairs(numberOfChairs).orElseThrow(TablePriceNotFoundException::new);
 
         if(restaurantTableRepository.existsByNumberOfChairsAndActiveTrue(numberOfChairs)){
             throw new TablesExistException();
@@ -53,7 +52,7 @@ public class TablePriceService {
 
     @Transactional
     public TablePrice updateTablePrice(int numberOfChairs, TablePrice tablePrice) {
-        return tablePriceRepository.findByNumberOfChairs(numberOfChairs).map(tablePriceDB -> {
+        return tablePriceRepository.findWithLockByNumberOfChairs(numberOfChairs).map(tablePriceDB -> {
             tablePriceDB.setPrice(tablePrice.getPrice());
             return tablePriceRepository.save(tablePriceDB);
         })
