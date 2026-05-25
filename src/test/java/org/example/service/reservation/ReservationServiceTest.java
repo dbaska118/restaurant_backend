@@ -3,6 +3,7 @@ package org.example.service.reservation;
 import jakarta.persistence.EntityManager;
 import org.example.dto.reservation.ReservationRequestDto;
 import org.example.dto.reservation.ReservationResponseDto;
+import org.example.exception.InsufficientFundsException;
 import org.example.exception.ReservationTimeConflictException;
 import org.example.exception.RestaurantTableNotFoundException;
 import org.example.exception.TablePriceNotFoundException;
@@ -61,6 +62,9 @@ public class ReservationServiceTest {
         dto.setEndTime(endTime);
         dto.setTableId(-1L);
         dto.setEmail("user@wp.pl");
+        Client client = new Client("user@wp.pl", "oassword", "Jan", "Nowak");
+        client.setBalance(180);
+        entityManager.persist(client);
 
         Assertions.assertThrows(RestaurantTableNotFoundException.class, () -> {
             reservationService.createReservation(dto);
@@ -74,6 +78,12 @@ public class ReservationServiceTest {
 
 
         entityManager.persist(tablePrice);
+        Assertions.assertThrows(InsufficientFundsException.class, () -> {
+            reservationService.createReservation(dto);
+        });
+
+        client.setBalance(500);
+        entityManager.persist(client);
         Reservation reservation = reservationService.createReservation(dto);
         Assertions.assertNotNull(reservation);
 
