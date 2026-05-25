@@ -55,7 +55,7 @@ public class ReservationService {
     }
 
     @Transactional
-    public Reservation createReservation(ReservationRequestDto reservationRequestDto) {
+    public ReservationResponseDto createReservation(ReservationRequestDto reservationRequestDto) {
         RestaurantTable restaurantTable = restaurantTableRepository.findWithLockById(reservationRequestDto.getTableId()).orElseThrow(RestaurantTableNotFoundException::new);
         TablePrice tablePrice = tablePriceRepository.findByNumberOfChairs(restaurantTable.getNumberOfChairs()).orElseThrow(TablePriceNotFoundException::new);
         User client = userRepository.findByEmail(reservationRequestDto.getEmail()).orElse(null);
@@ -80,7 +80,7 @@ public class ReservationService {
         reservation.setPrice(tablePrice.getPrice());
         reservation.setReservationStatus(ReservationStatus.CONFIRMED);
         reservation.setReservationCode(generateReservationCode());
-        return reservationRepository.save(reservation);
+        return reservationMapper.toReservationResponseDto(reservationRepository.save(reservation));
     }
 
     private String generateReservationCode(){

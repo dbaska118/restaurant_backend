@@ -84,7 +84,7 @@ public class ReservationServiceTest {
 
         client.setBalance(500);
         entityManager.persist(client);
-        Reservation reservation = reservationService.createReservation(dto);
+        ReservationResponseDto reservation = reservationService.createReservation(dto);
         Assertions.assertNotNull(reservation);
 
         dto.setEmail("user2@wp.pl");
