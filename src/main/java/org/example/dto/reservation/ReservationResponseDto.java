@@ -22,6 +22,8 @@ public class ReservationResponseDto {
 
     private ReservationStatus reservationStatus;
 
+    private int NumberOfChairs;
+
     public ReservationResponseDto() {
     }
 
@@ -87,5 +89,13 @@ public class ReservationResponseDto {
 
     public void setReservationStatus(ReservationStatus reservationStatus) {
         this.reservationStatus = reservationStatus;
+    }
+
+    public int getNumberOfChairs() {
+        return NumberOfChairs;
+    }
+
+    public void setNumberOfChairs(int numberOfChairs) {
+        NumberOfChairs = numberOfChairs;
     }
 }

@@ -28,6 +28,7 @@ public class ReservationMapper {
         reservationResponseDto.setPrice(reservation.getPrice());
         reservationResponseDto.setReservationCode(reservation.getReservationCode());
         reservationResponseDto.setReservationStatus(reservation.getReservationStatus());
+        reservationResponseDto.setNumberOfChairs(reservation.getRestaurantTable().getNumberOfChairs());
         return reservationResponseDto;
     }
 

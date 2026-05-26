@@ -67,6 +67,7 @@ public class ReservationMapperTest {
         Assertions.assertEquals(250, dto.getPrice());
         Assertions.assertEquals("000123", dto.getReservationCode());
         Assertions.assertEquals(ReservationStatus.CONFIRMED, dto.getReservationStatus());
+        Assertions.assertEquals(4, dto.getNumberOfChairs());
     }
 
     @Test

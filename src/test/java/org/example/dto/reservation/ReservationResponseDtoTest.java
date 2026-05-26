@@ -20,6 +20,7 @@ public class ReservationResponseDtoTest {
         reservationResponseDto.setPrice(150);
         reservationResponseDto.setReservationCode("001235");
         reservationResponseDto.setReservationStatus(ReservationStatus.CONFIRMED);
+        reservationResponseDto.setNumberOfChairs(4);
 
         Assertions.assertEquals(1L, reservationResponseDto.getId());
         Assertions.assertEquals("test@test.com", reservationResponseDto.getEmail());
@@ -29,5 +30,6 @@ public class ReservationResponseDtoTest {
         Assertions.assertEquals(150, reservationResponseDto.getPrice());
         Assertions.assertEquals("001235", reservationResponseDto.getReservationCode());
         Assertions.assertEquals(ReservationStatus.CONFIRMED, reservationResponseDto.getReservationStatus());
+        Assertions.assertEquals(4, reservationResponseDto.getNumberOfChairs());
     }
 }
