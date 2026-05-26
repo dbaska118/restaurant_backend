@@ -46,7 +46,7 @@ public class ReservationService {
     }
 
     public List<ReservationResponseDto> getAllReservationsByEmail(String email) {
-        List<Reservation> list =  reservationRepository.findAllByEmail(email);
+        List<Reservation> list =  reservationRepository.findAllByEmailAndReservationStatus(email, ReservationStatus.CONFIRMED);
         List<ReservationResponseDto> response = new ArrayList<>();
         for (Reservation reservation : list) {
             response.add(reservationMapper.toReservationResponseDto(reservation));
