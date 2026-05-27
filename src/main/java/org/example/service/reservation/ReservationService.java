@@ -1,12 +1,7 @@
 package org.example.service.reservation;
 
-import org.example.dto.reservation.ReservationMapper;
-import org.example.dto.reservation.ReservationRequestDto;
-import org.example.dto.reservation.ReservationResponseDto;
-import org.example.exception.InsufficientFundsException;
-import org.example.exception.ReservationTimeConflictException;
-import org.example.exception.RestaurantTableNotFoundException;
-import org.example.exception.TablePriceNotFoundException;
+import org.example.dto.reservation.*;
+import org.example.exception.*;
 import org.example.model.reservation.*;
 import org.example.model.user.Client;
 import org.example.model.user.User;
@@ -20,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.security.SecureRandom;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,16 +29,18 @@ public class ReservationService {
     private final TablePriceRepository tablePriceRepository;
     private final UserRepository userRepository;
     private final BalanceOperationRepository balanceOperationRepository;
+    private final BalanceOperationMapper balanceOperationMapper;
     private static final SecureRandom secureRandom = new SecureRandom();
 
     @Autowired
-    public ReservationService(ReservationRepository reservationRepository, ReservationMapper reservationMapper, RestaurantTableRepository restaurantTableRepository, TablePriceRepository tablePriceRepository, UserRepository userRepository, BalanceOperationRepository balanceOperationRepository) {
+    public ReservationService(ReservationRepository reservationRepository, ReservationMapper reservationMapper, RestaurantTableRepository restaurantTableRepository, TablePriceRepository tablePriceRepository, UserRepository userRepository, BalanceOperationRepository balanceOperationRepository, BalanceOperationMapper balanceOperationMapper) {
         this.reservationRepository = reservationRepository;
         this.reservationMapper = reservationMapper;
         this.restaurantTableRepository = restaurantTableRepository;
         this.tablePriceRepository = tablePriceRepository;
         this.userRepository = userRepository;
         this.balanceOperationRepository = balanceOperationRepository;
+        this.balanceOperationMapper = balanceOperationMapper;
     }
 
     public List<ReservationResponseDto> getAllReservationsByEmail(String email) {
@@ -85,5 +83,45 @@ public class ReservationService {
 
     private String generateReservationCode(){
         return String.format("%06d", secureRandom.nextInt(1000000));
+    }
+
+    @Transactional
+    public BalanceOperationDTO cancelReservationClient(long id, String email) {
+        Reservation reservation = reservationRepository.findById(id).orElseThrow(ReservationNotFoundException::new);
+        if(!reservation.getEmail().equals(email)) {
+            throw new AccessDeniedException();
+        }
+        if(reservation.getReservationStatus() != ReservationStatus.CONFIRMED) {
+            throw new ReservationStatusWrongTypeException();
+        }
+        if (reservation.getStartTime().isBefore(LocalDateTime.now())){
+            throw new ReservationExpiredException();
+        }
+
+        reservation.setReservationStatus(ReservationStatus.CANCELLED);
+        LocalDateTime now = LocalDateTime.now();
+        long hoursUntil = Duration.between(LocalDateTime.now(), reservation.getStartTime()).toHours();
+
+        double moneyBack;
+
+        if(hoursUntil > 24){
+            moneyBack = reservation.getPrice();
+        }
+        else if(hoursUntil > 12){
+            moneyBack = reservation.getPrice() * 0.75;
+        }
+        else if(hoursUntil > 6){
+            moneyBack = reservation.getPrice() * 0.5 ;
+        }
+        else {
+            moneyBack = reservation.getPrice() * 0.2;
+        }
+
+        User client = reservation.getUser();
+        BalanceOperation balanceOperation = new BalanceOperation(client, now, moneyBack, ((Client)client).getBalance(),  ((Client)client).getBalance() + moneyBack, BalanceOperationType.RESERVATION_CANCELLED);
+        ((Client)client).setBalance(((Client)client).getBalance() + moneyBack);
+        userRepository.save(client);
+        reservationRepository.save(reservation);
+        return balanceOperationMapper.fromBalanceOperation(balanceOperationRepository.save(balanceOperation));
     }
 }

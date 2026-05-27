@@ -1,12 +1,10 @@
 package org.example.service.reservation;
 
 import jakarta.persistence.EntityManager;
+import org.example.dto.reservation.BalanceOperationDTO;
 import org.example.dto.reservation.ReservationRequestDto;
 import org.example.dto.reservation.ReservationResponseDto;
-import org.example.exception.InsufficientFundsException;
-import org.example.exception.ReservationTimeConflictException;
-import org.example.exception.RestaurantTableNotFoundException;
-import org.example.exception.TablePriceNotFoundException;
+import org.example.exception.*;
 import org.example.model.reservation.Reservation;
 import org.example.model.reservation.ReservationStatus;
 import org.example.model.reservation.RestaurantTable;
@@ -91,5 +89,62 @@ public class ReservationServiceTest {
         Assertions.assertThrows(ReservationTimeConflictException.class, () -> {
             reservationService.createReservation(dto);
         });
+    }
+
+    @Test
+    public void cancelReservationTest(){
+        LocalDateTime startTime = LocalDateTime.now().minusDays(1);
+        LocalDateTime endTime = LocalDateTime.now().minusDays(1).plusHours(2);
+        RestaurantTable restaurantTable = new RestaurantTable("Stolik 1", 5);
+        entityManager.persist(restaurantTable);
+        User client = new Client("user@wp.pl", "oassword", "Jan", "Nowak");
+        entityManager.persist(client);
+
+        Reservation reservation = new Reservation("user@wp.pl", restaurantTable, startTime, endTime, 100, "123456", ReservationStatus.CONFIRMED);
+        reservation.setUser(client);
+
+        Assertions.assertThrows(ReservationNotFoundException.class, () -> {
+            reservationService.cancelReservationClient(-1L, "user@wp.pl");
+        });
+
+        entityManager.persist(reservation);
+
+        Assertions.assertThrows(ReservationExpiredException.class, () -> {
+            reservationService.cancelReservationClient(reservation.getId(), "user@wp.pl");
+        });
+
+        reservation.setReservationStatus(ReservationStatus.CANCELLED);
+        entityManager.persist(reservation);
+        Assertions.assertThrows(AccessDeniedException.class, () -> {
+            reservationService.cancelReservationClient(reservation.getId(), "user2222@wp.pl");
+        });
+        Assertions.assertThrows(ReservationStatusWrongTypeException.class, () -> {
+            reservationService.cancelReservationClient(reservation.getId(), "user@wp.pl");
+        });
+
+
+        reservation.setStartTime(LocalDateTime.now().plusDays(1).plusHours(2));
+        reservation.setEndTime(LocalDateTime.now().plusDays(1).plusHours(4));
+        reservation.setReservationStatus(ReservationStatus.CONFIRMED);
+        BalanceOperationDTO balanceOperationDTO = reservationService.cancelReservationClient(reservation.getId(), "user@wp.pl");
+        Assertions.assertEquals(100, balanceOperationDTO.getAmount());
+
+        reservation.setStartTime(LocalDateTime.now().plusHours(14));
+        reservation.setEndTime(LocalDateTime.now().plusHours(16));
+        reservation.setReservationStatus(ReservationStatus.CONFIRMED);
+        balanceOperationDTO = reservationService.cancelReservationClient(reservation.getId(), "user@wp.pl");
+        Assertions.assertEquals(75, balanceOperationDTO.getAmount());
+
+        reservation.setStartTime(LocalDateTime.now().plusHours(8));
+        reservation.setEndTime(LocalDateTime.now().plusHours(10));
+        reservation.setReservationStatus(ReservationStatus.CONFIRMED);
+        balanceOperationDTO = reservationService.cancelReservationClient(reservation.getId(), "user@wp.pl");
+        Assertions.assertEquals(50, balanceOperationDTO.getAmount());
+
+        reservation.setStartTime(LocalDateTime.now().plusHours(3));
+        reservation.setEndTime(LocalDateTime.now().plusHours(5));
+        reservation.setReservationStatus(ReservationStatus.CONFIRMED);
+        balanceOperationDTO = reservationService.cancelReservationClient(reservation.getId(), "user@wp.pl");
+        Assertions.assertEquals(20, balanceOperationDTO.getAmount());
     }
 }
