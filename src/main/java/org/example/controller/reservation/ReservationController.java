@@ -1,9 +1,9 @@
 package org.example.controller.reservation;
 
+import org.example.dto.reservation.BalanceOperationDTO;
 import org.example.dto.reservation.ReservationRequestDto;
 import org.example.dto.reservation.ReservationResponseDto;
-import org.example.exception.InsufficientFundsException;
-import org.example.exception.ReservationTimeConflictException;
+import org.example.exception.*;
 import org.example.model.reservation.Reservation;
 import org.example.model.user.User;
 import org.example.repository.user.UserRepository;
@@ -53,6 +53,24 @@ public class ReservationController {
         }
         catch(Exception e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PostMapping("/client/cancel/{id}")
+    public ResponseEntity<BalanceOperationDTO> cancelReservationClient(@PathVariable Long id, Principal principal){
+        String emailToken = principal.getName();
+        try {
+            BalanceOperationDTO response = reservationService.cancelReservationClient(id, emailToken);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
+        catch (AccessDeniedException e){
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+        catch (ReservationNotFoundException e){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        catch (ReservationExpiredException | ReservationStatusWrongTypeException e){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
