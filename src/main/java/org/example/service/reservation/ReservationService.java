@@ -124,4 +124,21 @@ public class ReservationService {
         reservationRepository.save(reservation);
         return balanceOperationMapper.fromBalanceOperation(balanceOperationRepository.save(balanceOperation));
     }
+
+    public FindFreeTablesResponse findAllFreeRestaurantTables(FindFreeTablesRequest request) {
+        LocalDateTime start = LocalDateTime.of(request.getReservationDay(), request.getReservationStartTime());
+        LocalDateTime end = start.plusHours(request.getReservationLength());
+        List<RestaurantTable> exact = restaurantTableRepository.findAllFreeTables(request.getMinNumberOfChairs(), start, end);
+        List<RestaurantTable> earlier = restaurantTableRepository.findAllFreeTables(request.getMinNumberOfChairs(), start.minusHours(2), end.minusHours(2));
+        List<RestaurantTable> later = restaurantTableRepository.findAllFreeTables(request.getMinNumberOfChairs(), start.plusHours(2), end.plusHours(2));
+
+        FindFreeTablesResponse findFreeTablesResponse = new FindFreeTablesResponse();
+        findFreeTablesResponse.setStartTime(start);
+        findFreeTablesResponse.setEndTime(end);
+        findFreeTablesResponse.setExactTables(exact);
+        findFreeTablesResponse.setEarlierTables(earlier);
+        findFreeTablesResponse.setLaterTables(later);
+
+        return findFreeTablesResponse;
+    }
 }

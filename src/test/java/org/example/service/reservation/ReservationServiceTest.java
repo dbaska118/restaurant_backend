@@ -1,9 +1,7 @@
 package org.example.service.reservation;
 
 import jakarta.persistence.EntityManager;
-import org.example.dto.reservation.BalanceOperationDTO;
-import org.example.dto.reservation.ReservationRequestDto;
-import org.example.dto.reservation.ReservationResponseDto;
+import org.example.dto.reservation.*;
 import org.example.exception.*;
 import org.example.model.reservation.Reservation;
 import org.example.model.reservation.ReservationStatus;
@@ -146,5 +144,40 @@ public class ReservationServiceTest {
         reservation.setReservationStatus(ReservationStatus.CONFIRMED);
         balanceOperationDTO = reservationService.cancelReservationClient(reservation.getId(), "user@wp.pl");
         Assertions.assertEquals(20, balanceOperationDTO.getAmount());
+    }
+
+    @Test
+    public void findAllFreeRestaurantTablesTest(){
+        LocalDateTime now = LocalDateTime.now();
+        FindFreeTablesRequest request = new FindFreeTablesRequest();
+        request.setReservationLength(2);
+        request.setReservationDay(now.toLocalDate());
+        request.setReservationStartTime(now.toLocalTime());
+        request.setMinNumberOfChairs(4);
+
+        RestaurantTable table1 = new RestaurantTable("Stolik 1", 6);
+        RestaurantTable table2 = new RestaurantTable("Stolik 2", 5);
+        entityManager.persist(table1);
+        entityManager.persist(table2);
+
+        Reservation reservation = new Reservation("test@wp.pl", table1, now.plusHours(1), now.plusHours(3), 50, "00000", ReservationStatus.CONFIRMED);
+        Reservation reservation2 = new Reservation("test@wp.pl",table2, now, now.plusHours(2), 50, "00000", ReservationStatus.CANCELLED);
+        Reservation reservation3 = new Reservation("test@wp.pl", table2, now.minusHours(2), now, 50, "00000", ReservationStatus.CONFIRMED);
+        entityManager.persist(reservation);
+        entityManager.persist(reservation2);
+        entityManager.persist(reservation3);
+
+        FindFreeTablesResponse response = reservationService.findAllFreeRestaurantTables(request);
+        Assertions.assertEquals(now, response.getStartTime());
+        Assertions.assertEquals(now.plusHours(2), response.getEndTime());
+        Assertions.assertEquals(1, response.getExactTables().size());
+        Assertions.assertEquals(table2, response.getExactTables().get(0));
+        Assertions.assertEquals(1, response.getEarlierTables().size());
+        Assertions.assertEquals(table1, response.getEarlierTables().get(0));
+        Assertions.assertEquals(1, response.getLaterTables().size());
+        Assertions.assertEquals(table2, response.getLaterTables().get(0));
+
+
+
     }
 }
