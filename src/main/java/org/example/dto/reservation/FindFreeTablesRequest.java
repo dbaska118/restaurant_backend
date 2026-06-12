@@ -8,6 +8,7 @@ import java.time.LocalTime;
 public class FindFreeTablesRequest {
     private int minNumberOfChairs;
 
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate reservationDay;
 
     @JsonFormat(pattern = "HH:mm:ss")

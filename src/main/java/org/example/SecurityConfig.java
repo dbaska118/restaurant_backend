@@ -60,6 +60,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/openingHours/**").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/api/openingHours/**").hasAnyAuthority("admin", "headAdmin")
 
+                        .requestMatchers(HttpMethod.POST, "/api/reservation/freeTables/**").permitAll()
                         .requestMatchers("/api/reservation/client").hasAnyAuthority("client")
                         .requestMatchers("/api/reservation/**").authenticated()
 

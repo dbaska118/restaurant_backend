@@ -1,8 +1,6 @@
 package org.example.controller.reservation;
 
-import org.example.dto.reservation.BalanceOperationDTO;
-import org.example.dto.reservation.ReservationRequestDto;
-import org.example.dto.reservation.ReservationResponseDto;
+import org.example.dto.reservation.*;
 import org.example.exception.*;
 import org.example.model.reservation.Reservation;
 import org.example.model.user.User;
@@ -72,6 +70,11 @@ public class ReservationController {
         catch (ReservationExpiredException | ReservationStatusWrongTypeException e){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @PostMapping("/freeTables")
+    public ResponseEntity<FindFreeTablesResponse> findAllFreeRestaurantTables(@RequestBody FindFreeTablesRequest request){
+        return new ResponseEntity<>(reservationService.findAllFreeRestaurantTables(request), HttpStatus.OK);
     }
 
 }
