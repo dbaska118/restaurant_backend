@@ -5,6 +5,9 @@
 - **Spring Boot**
 - **Kontener Docker** z bazą danych **PostgreSQL**
 
+## Schemat bazy danych
+<img width="875" height="687" alt="image" src="https://github.com/user-attachments/assets/b698e0c7-5db5-4f46-8b2a-da36744194d8" />
+
 ## Uwierzytelnianie:
 - Uwierzytelnianie użytkowników odbywa się za pomocą adresu e-mail oraz hasła.
 - Hasła kont użytkowników przechowywane są w bazie danych w formie niejawnej po wcześniejszym obliczeniu wartościa skrótu za pomocą algorytmu **BCrypt**.
