@@ -67,7 +67,7 @@ public class ReservationService {
                 throw new InsufficientFundsException();
             }
             else {
-                BalanceOperation balanceOperation = new BalanceOperation(client, LocalDateTime.now(), tablePrice.getPrice(), ((Client)client).getBalance(), ((Client)client).getBalance() - tablePrice.getPrice(), BalanceOperationType.RESERVATION);
+                BalanceOperation balanceOperation = new BalanceOperation(client, LocalDateTime.now(), -tablePrice.getPrice(), ((Client)client).getBalance(), ((Client)client).getBalance() - tablePrice.getPrice(), BalanceOperationType.RESERVATION);
                 ((Client)client).setBalance(((Client)client).getBalance() - tablePrice.getPrice());
                 userRepository.save(client);
                 balanceOperationRepository.save(balanceOperation);
