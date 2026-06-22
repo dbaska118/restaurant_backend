@@ -69,22 +69,32 @@
 ### Wymagania wstępne
 - **Java 23** 
 - **Docker Desktop** (uruchomiony w tle)
-### Krok 1: Uruchomienie bazy danych (Docker)
+
+### Uruchamianie aplikacji
 1. Otwórz terminal w katalogu głównym projektu (`...\restaurant_backend\`).
-2. Przejdź do folderu z konfiguracją Dockera:
+2. Przejdź do folderu z konfiguracją Dockera i uruchom kontener.
 ```
 cd Docker
 docker compose up -d
 ```
-* Jeśli chcesz uruchomić odizolowaną bazę przeznaczoną do testów:
-```
-docker compose -f test-docker-compose.yml up -d
-```
-
-### Krok 2: Uruchomienie aplikacji Spring Boot
-1. Wróć do głównego katalogu projektu:
+3. Wróć do głównego katalogu i uruchom aplikację.
 ```
 cd ..
 .\mvnw.cmd spring-boot:run
 ```
+
+### Uruchamianie testów
+1. Otwórz terminal w katalogu głównym projektu (`...\restaurant_backend\`).
+2. Przejdź do folderu z konfiguracją Dockera i uruchom testowy kontener.
+```
+cd Docker
+docker compose -f test-docker-compose.yml up -d
+```
+3. Wróć do głównego katalogu i uruchom testy.
+```
+cd ..
+.\mvnw.cmd test
+```
+
+
 
