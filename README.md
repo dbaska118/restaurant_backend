@@ -71,7 +71,7 @@
 - **Docker Desktop** (uruchomiony w tle)
 
 ### Uruchamianie aplikacji
-1. Otwórz terminal w katalogu głównym projektu (`...\restaurant_backend\`).
+1. Otwórz terminal w katalogu głównym projektu.
 2. Przejdź do folderu z konfiguracją Dockera i uruchom kontener.
 ```
 cd Docker
@@ -84,7 +84,7 @@ cd ..
 ```
 
 ### Uruchamianie testów
-1. Otwórz terminal w katalogu głównym projektu (`...\restaurant_backend\`).
+1. Otwórz terminal w katalogu głównym projektu.
 2. Przejdź do folderu z konfiguracją Dockera i uruchom testowy kontener.
 ```
 cd Docker
