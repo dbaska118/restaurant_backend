@@ -19,10 +19,12 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     List<Reservation> findByRestaurantTableAndStartTimeBeforeAndEndTimeAfter(RestaurantTable restaurantTable, LocalDateTime end, LocalDateTime start);
 
 
-    @Query(value = "SELECT DISTINCT ON (restaurant_table_id) * FROM reservation " +
-            "WHERE start_time >= :bufferTime AND start_time <= :endOfDay " +
-            "AND reservation_status = :status " +
-            "ORDER BY restaurant_table_id, start_time ASC",
+    @Query(value = "SELECT DISTINCT ON (r.restaurant_table_id) r.* FROM reservation r " +
+            "JOIN restaurant_table t ON r.restaurant_table_id = t.id " +
+            "WHERE r.start_time >= :bufferTime AND r.start_time <= :endOfDay " +
+            "AND r.reservation_status = :status " +
+            "AND t.active = true " +
+            "ORDER BY r.restaurant_table_id ASC, r.start_time ASC",
             nativeQuery = true)
     List<Reservation> findNextReservations(@Param("bufferTime") LocalDateTime bufferTime, @Param("endOfDay") LocalDateTime endOfDay, @Param("status") ReservationStatus status);
 

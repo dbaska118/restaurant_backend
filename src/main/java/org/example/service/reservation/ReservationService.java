@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.security.SecureRandom;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -140,5 +141,18 @@ public class ReservationService {
         findFreeTablesResponse.setLaterTables(later);
 
         return findFreeTablesResponse;
+    }
+
+    public List<NextReservationDTO> getNextReservations() {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime endDay = now.with(LocalTime.MAX);
+
+        List<Reservation> reservationList = reservationRepository.findNextReservations(now.minusHours(1), endDay, ReservationStatus.CONFIRMED);
+        List<NextReservationDTO> nextReservations = new ArrayList<>();
+        for(Reservation reservation : reservationList) {
+            NextReservationDTO nextReservationDTO = reservationMapper.toNextReservationDTO(reservation);
+            nextReservations.add(nextReservationDTO);
+        }
+        return nextReservations;
     }
 }

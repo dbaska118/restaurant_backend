@@ -62,6 +62,7 @@ public class SecurityConfig {
 
                         .requestMatchers(HttpMethod.POST, "/api/reservation/freeTables/**").permitAll()
                         .requestMatchers("/api/reservation/client").hasAnyAuthority("client")
+                        .requestMatchers("/api/reservation/employee/**").hasAnyAuthority("employee")
                         .requestMatchers("/api/reservation/**").authenticated()
 
 

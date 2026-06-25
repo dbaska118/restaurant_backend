@@ -77,4 +77,9 @@ public class ReservationController {
         return new ResponseEntity<>(reservationService.findAllFreeRestaurantTables(request), HttpStatus.OK);
     }
 
+    @GetMapping("/employee/nextReservation")
+    public ResponseEntity<List<NextReservationDTO>> getNextReservations(){
+        return new ResponseEntity<>(reservationService.getNextReservations(), HttpStatus.OK);
+    }
+
 }

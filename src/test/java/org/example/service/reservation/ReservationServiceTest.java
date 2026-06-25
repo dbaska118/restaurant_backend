@@ -17,6 +17,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @SpringBootTest
@@ -177,6 +178,30 @@ public class ReservationServiceTest {
         Assertions.assertEquals(1, response.getLaterTables().size());
         Assertions.assertEquals(table2, response.getLaterTables().get(0));
 
+    }
+
+    @Test
+    public void getNextReservationTest(){
+        LocalDateTime now = LocalDateTime.now();
+        RestaurantTable restaurantTable = new RestaurantTable("Stolik 1", 5);
+        RestaurantTable restaurantTable2 = new RestaurantTable("Stolik 2", 3);
+        entityManager.persist(restaurantTable);
+        entityManager.persist(restaurantTable2);
+
+
+        Reservation reservation = new Reservation("text@wp.pl", restaurantTable, now.plusHours(4), now.plusHours(6), 100, "000001", ReservationStatus.CONFIRMED);
+        Reservation reservation2 = new Reservation("client@wp.pl", restaurantTable, now, now.plusHours(2), 100, "000002", ReservationStatus.CONFIRMED);
+        Reservation reservation3 = new Reservation("client@wp.pl", restaurantTable2, now, now.plusHours(2), 100, "000003", ReservationStatus.CANCELLED);
+        entityManager.persist(reservation);
+        entityManager.persist(reservation2);
+        entityManager.persist(reservation3);
+
+        List<NextReservationDTO> dtoList = reservationService.getNextReservations();
+        Assertions.assertEquals(1, dtoList.size());
+        Assertions.assertEquals(reservation2.getId(), dtoList.get(0).getId());
+        Assertions.assertEquals(restaurantTable.getId(), dtoList.get(0).getTableId());
+        Assertions.assertEquals(reservation2.getStartTime(), dtoList.get(0).getStartTime());
+        Assertions.assertEquals(reservation2.getEndTime(), dtoList.get(0).getEndTime());
 
 
     }

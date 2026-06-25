@@ -2,6 +2,7 @@ package org.example.controller.reservation;
 
 import jakarta.persistence.EntityManager;
 import org.example.dto.reservation.BalanceOperationDTO;
+import org.example.dto.reservation.NextReservationDTO;
 import org.example.dto.reservation.ReservationRequestDto;
 import org.example.dto.reservation.ReservationResponseDto;
 import org.example.exception.InsufficientFundsException;
@@ -161,5 +162,20 @@ public class ReservationControllerTest {
 
         response = reservationController.cancelReservationClient(-1L, principal);
         Assertions.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+
+    @Test
+    public void getNextReservationTest(){
+        LocalDateTime now = LocalDateTime.now();
+        RestaurantTable restaurantTable = new RestaurantTable("Stolik 1", 5);
+        entityManager.persist(restaurantTable);
+
+        Reservation reservation = new Reservation("client@wp.pl", restaurantTable, now, now.plusHours(2), 100, "000002", ReservationStatus.CONFIRMED);
+        entityManager.persist(reservation);
+
+        ResponseEntity<List<NextReservationDTO>> response = reservationController.getNextReservations();
+        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+        Assertions.assertTrue(response.getBody().get(0) instanceof NextReservationDTO);
+
     }
 }
