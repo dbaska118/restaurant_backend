@@ -42,4 +42,14 @@ public class ReservationMapper {
 
         return reservation;
     }
+
+    public NextReservationDTO toNextReservationDTO(Reservation reservation) {
+        NextReservationDTO nextReservationDTO = new NextReservationDTO();
+        nextReservationDTO.setId(reservation.getId());
+        nextReservationDTO.setTableId(reservation.getRestaurantTable().getId());
+        nextReservationDTO.setStartTime(reservation.getStartTime());
+        nextReservationDTO.setEndTime(reservation.getEndTime());
+
+        return nextReservationDTO;
+    }
 }

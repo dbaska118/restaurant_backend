@@ -93,4 +93,20 @@ public class ReservationMapperTest {
         Assertions.assertEquals(now, reservation.getStartTime());
         Assertions.assertEquals(now.plusHours(2), reservation.getEndTime());
     }
+
+    @Test
+    public void toNextReservationDtoTest(){
+        LocalDateTime now = LocalDateTime.now();
+        RestaurantTable table = new RestaurantTable("Stolik 1", 4);
+        Reservation reservation = new Reservation("client@wp.pl", table, now, now.plusHours(2), 250, "000123", ReservationStatus.CONFIRMED);
+
+        entityManager.persist(table);
+        entityManager.persist(reservation);
+
+        NextReservationDTO dto = mapper.toNextReservationDTO(reservation);
+        Assertions.assertEquals(reservation.getId(), dto.getId());
+        Assertions.assertEquals(table.getId(), dto.getTableId());
+        Assertions.assertEquals(now, dto.getStartTime());
+        Assertions.assertEquals(now.plusHours(2), dto.getEndTime());
+    }
 }
