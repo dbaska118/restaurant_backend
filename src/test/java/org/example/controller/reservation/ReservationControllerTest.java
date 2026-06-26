@@ -1,22 +1,16 @@
 package org.example.controller.reservation;
 
 import jakarta.persistence.EntityManager;
-import org.example.dto.reservation.BalanceOperationDTO;
+import org.example.dto.balance.BalanceOperationDTO;
 import org.example.dto.reservation.NextReservationDTO;
 import org.example.dto.reservation.ReservationRequestDto;
 import org.example.dto.reservation.ReservationResponseDto;
-import org.example.exception.InsufficientFundsException;
-import org.example.exception.ReservationTimeConflictException;
-import org.example.exception.RestaurantTableNotFoundException;
-import org.example.exception.TablePriceNotFoundException;
 import org.example.model.reservation.Reservation;
 import org.example.model.reservation.ReservationStatus;
-import org.example.model.reservation.RestaurantTable;
-import org.example.model.reservation.TablePrice;
+import org.example.model.restaurantTable.RestaurantTable;
+import org.example.model.restaurantTable.TablePrice;
 import org.example.model.user.Client;
 import org.example.model.user.User;
-import org.example.repository.reservation.ReservationRepository;
-import org.example.service.reservation.ReservationService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

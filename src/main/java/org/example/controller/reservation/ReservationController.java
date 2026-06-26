@@ -1,9 +1,10 @@
 package org.example.controller.reservation;
 
+import org.example.dto.balance.BalanceOperationDTO;
 import org.example.dto.reservation.*;
+import org.example.dto.restaurantTable.FindFreeTablesRequest;
+import org.example.dto.restaurantTable.FindFreeTablesResponse;
 import org.example.exception.*;
-import org.example.model.reservation.Reservation;
-import org.example.model.user.User;
 import org.example.repository.user.UserRepository;
 import org.example.service.reservation.ReservationService;
 import org.springframework.http.HttpStatus;

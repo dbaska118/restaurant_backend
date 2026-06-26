@@ -1,0 +1,87 @@
+package org.example.controller.restaurantTable;
+
+import org.example.dto.restaurantTable.RestaurantTableStatusRequest;
+import org.example.exception.RestaurantTableNotFoundException;
+import org.example.exception.RestaurantTableStateConflict;
+import org.example.exception.TablePriceNotFoundException;
+import org.example.model.restaurantTable.RestaurantTable;
+import org.example.service.restaurantTable.RestaurantTableService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/restaurantTable")
+public class RestaurantTableController {
+
+    private final RestaurantTableService restaurantTableService;
+
+    @Autowired
+    public RestaurantTableController(RestaurantTableService restaurantTableService) {
+        this.restaurantTableService = restaurantTableService;
+    }
+
+    @GetMapping
+    public ResponseEntity<List<RestaurantTable>> getAllRestaurantTables() {
+        List<RestaurantTable> response = restaurantTableService.getAllRestaurantTables();
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PostMapping
+    public ResponseEntity<RestaurantTable> createRestaurantTable(@RequestBody RestaurantTable restaurantTable) {
+        try {
+            RestaurantTable response = restaurantTableService.createRestaurantTable(restaurantTable);
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
+        }
+        catch (TablePriceNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<RestaurantTable> updateRestaurantTable(@PathVariable long id, @RequestBody RestaurantTable restaurantTable) {
+        try {
+            RestaurantTable response = restaurantTableService.updateRestaurantTable(id, restaurantTable);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
+        catch (TablePriceNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        catch (RestaurantTableNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (RestaurantTableStateConflict e) {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<RestaurantTable> deleteRestaurantTable(@PathVariable long id) {
+        try {
+            RestaurantTable restaurantTable = restaurantTableService.deleteRestaurantTable(id);
+            return new ResponseEntity<>(restaurantTable, HttpStatus.OK);
+        }
+        catch (RestaurantTableNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<RestaurantTable> updateRestaurantTableStatus(@PathVariable long id, @RequestBody RestaurantTableStatusRequest request) {
+        try {
+            RestaurantTable restaurantTable = restaurantTableService.updateStatus(id, request);
+            return new ResponseEntity<>(restaurantTable, HttpStatus.OK);
+        }
+        catch (RestaurantTableNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        catch (RestaurantTableStateConflict e) {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+    }
+
+
+
+}

@@ -1,10 +1,8 @@
 package org.example.dto.reservation;
 
 import org.example.model.reservation.Reservation;
-import org.example.model.reservation.RestaurantTable;
+import org.example.model.restaurantTable.RestaurantTable;
 import org.example.model.user.User;
-import org.example.repository.user.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component

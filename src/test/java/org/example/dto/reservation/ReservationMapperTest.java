@@ -2,10 +2,9 @@ package org.example.dto.reservation;
 
 import org.example.model.reservation.Reservation;
 import org.example.model.reservation.ReservationStatus;
-import org.example.model.reservation.RestaurantTable;
+import org.example.model.restaurantTable.RestaurantTable;
 import org.example.model.user.Client;
 import org.example.model.user.User;
-import org.example.service.dish.DishService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

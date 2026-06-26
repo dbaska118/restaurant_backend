@@ -2,7 +2,7 @@ package org.example.repository.reservation;
 
 import org.example.model.reservation.Reservation;
 import org.example.model.reservation.ReservationStatus;
-import org.example.model.reservation.RestaurantTable;
+import org.example.model.restaurantTable.RestaurantTable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -27,5 +27,4 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             "ORDER BY r.restaurant_table_id ASC, r.start_time ASC",
             nativeQuery = true)
     List<Reservation> findNextReservations(@Param("bufferTime") LocalDateTime bufferTime, @Param("endOfDay") LocalDateTime endOfDay, @Param("status") ReservationStatus status);
-
 }

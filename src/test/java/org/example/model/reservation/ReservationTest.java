@@ -1,5 +1,6 @@
 package org.example.model.reservation;
 
+import org.example.model.restaurantTable.RestaurantTable;
 import org.example.model.user.Client;
 import org.example.model.user.User;
 import org.junit.jupiter.api.Assertions;

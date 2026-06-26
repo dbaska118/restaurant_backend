@@ -1,14 +1,22 @@
 package org.example.service.reservation;
 
+import org.example.dto.balance.BalanceOperationDTO;
+import org.example.dto.balance.BalanceOperationMapper;
 import org.example.dto.reservation.*;
+import org.example.dto.restaurantTable.FindFreeTablesRequest;
+import org.example.dto.restaurantTable.FindFreeTablesResponse;
 import org.example.exception.*;
+import org.example.model.balance.BalanceOperation;
+import org.example.model.balance.BalanceOperationType;
 import org.example.model.reservation.*;
+import org.example.model.restaurantTable.RestaurantTable;
+import org.example.model.restaurantTable.TablePrice;
 import org.example.model.user.Client;
 import org.example.model.user.User;
-import org.example.repository.reservation.BalanceOperationRepository;
+import org.example.repository.balance.BalanceOperationRepository;
 import org.example.repository.reservation.ReservationRepository;
-import org.example.repository.reservation.RestaurantTableRepository;
-import org.example.repository.reservation.TablePriceRepository;
+import org.example.repository.restaurantTable.RestaurantTableRepository;
+import org.example.repository.restaurantTable.TablePriceRepository;
 import org.example.repository.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -158,4 +166,5 @@ public class ReservationService {
         }
         return nextReservations;
     }
+
 }

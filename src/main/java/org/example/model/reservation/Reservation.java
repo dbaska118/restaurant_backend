@@ -1,6 +1,7 @@
 package org.example.model.reservation;
 
 import jakarta.persistence.*;
+import org.example.model.restaurantTable.RestaurantTable;
 import org.example.model.user.*;
 
 import java.time.LocalDateTime;

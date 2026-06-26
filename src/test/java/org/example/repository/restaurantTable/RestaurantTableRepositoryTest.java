@@ -1,5 +1,4 @@
-package org.example.repository.reservation;
-
+package org.example.repository.restaurantTable;
 
 import org.example.model.reservation.Reservation;
 import org.example.model.reservation.ReservationStatus;
@@ -13,43 +12,43 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @ActiveProfiles("test")
-public class ReservationRepositoryTest {
+public class RestaurantTableRepositoryTest {
 
     @Autowired
     private TestEntityManager entityManager;
 
     @Autowired
-    private ReservationRepository reservationRepository;
-
+    private RestaurantTableRepository restaurantTableRepository;
 
     @Test
-    public void findNextReservationsTest() {
+    public void findAllFreeTest(){
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime endDay = now.with(LocalTime.MAX);
-
         RestaurantTable restaurantTable = new RestaurantTable("Stolik 1", 5);
-        RestaurantTable restaurantTable2 = new RestaurantTable("Stolik 2", 3);
+        RestaurantTable restaurantTable2 = new RestaurantTable("Stolik 2", 6);
+        RestaurantTable restaurantTable3 = new RestaurantTable("Stolik 3", 3);
+        RestaurantTable restaurantTable4 = new RestaurantTable("Stolik 4", 6);
+        restaurantTable4.setActive(false);
+
+
         entityManager.persist(restaurantTable);
         entityManager.persist(restaurantTable2);
+        entityManager.persist(restaurantTable3);
+        entityManager.persist(restaurantTable4);
 
+        Reservation reservation = new Reservation("test@wp.pl", restaurantTable, now, now.plusHours(2), 50, "00000", ReservationStatus.CONFIRMED);
+        Reservation reservation2 = new Reservation("test@wp.pl", restaurantTable2, now, now.plusHours(2), 50, "00000", ReservationStatus.CANCELLED);
 
-        Reservation reservation = new Reservation("text@wp.pl", restaurantTable, now.plusHours(4), now.plusHours(6), 100, "000001", ReservationStatus.CONFIRMED);
-        Reservation reservation2 = new Reservation("client@wp.pl", restaurantTable, now, now.plusHours(2), 100, "000002", ReservationStatus.CONFIRMED);
-        Reservation reservation3 = new Reservation("client@wp.pl", restaurantTable2, now, now.plusHours(2), 100, "000003", ReservationStatus.CANCELLED);
         entityManager.persist(reservation);
         entityManager.persist(reservation2);
-        entityManager.persist(reservation3);
 
-        List<Reservation> reservations = reservationRepository.findNextReservations(now.minusHours(1), endDay, ReservationStatus.CONFIRMED);
-        Assertions.assertEquals(1, reservations.size());
-        Assertions.assertEquals(reservation2, reservations.get(0));
-
+        List<RestaurantTable> restaurantTableList = restaurantTableRepository.findAllFreeTables(4, now, now.plusHours(2));
+        Assertions.assertEquals(1, restaurantTableList.size());
+        Assertions.assertEquals(restaurantTable2, restaurantTableList.get(0));
 
     }
 }

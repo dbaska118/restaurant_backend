@@ -1,12 +1,15 @@
 package org.example.service.reservation;
 
 import jakarta.persistence.EntityManager;
+import org.example.dto.balance.BalanceOperationDTO;
 import org.example.dto.reservation.*;
+import org.example.dto.restaurantTable.FindFreeTablesRequest;
+import org.example.dto.restaurantTable.FindFreeTablesResponse;
 import org.example.exception.*;
 import org.example.model.reservation.Reservation;
 import org.example.model.reservation.ReservationStatus;
-import org.example.model.reservation.RestaurantTable;
-import org.example.model.reservation.TablePrice;
+import org.example.model.restaurantTable.RestaurantTable;
+import org.example.model.restaurantTable.TablePrice;
 import org.example.model.user.Client;
 import org.example.model.user.User;
 import org.junit.jupiter.api.Assertions;
@@ -17,7 +20,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 
 @SpringBootTest
