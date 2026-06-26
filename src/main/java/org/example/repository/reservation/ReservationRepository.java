@@ -16,7 +16,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     List<Reservation> findAllByEmailAndReservationStatus(String email, ReservationStatus reservationStatus);
 
-    List<Reservation> findByRestaurantTableAndStartTimeBeforeAndEndTimeAfter(RestaurantTable restaurantTable, LocalDateTime end, LocalDateTime start);
+    List<Reservation> findByRestaurantTableAndStartTimeBeforeAndEndTimeAfterAndReservationStatusNot(RestaurantTable restaurantTable, LocalDateTime end, LocalDateTime start, ReservationStatus reservationStatus);
 
 
     @Query(value = "SELECT DISTINCT ON (r.restaurant_table_id) r.* FROM reservation r " +

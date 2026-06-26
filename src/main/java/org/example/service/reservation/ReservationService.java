@@ -59,24 +59,27 @@ public class ReservationService {
         TablePrice tablePrice = tablePriceRepository.findByNumberOfChairs(restaurantTable.getNumberOfChairs()).orElseThrow(TablePriceNotFoundException::new);
         User client = userRepository.findByEmail(reservationRequestDto.getEmail()).orElse(null);
 
-        if(!reservationRepository.findByRestaurantTableAndStartTimeBeforeAndEndTimeAfter(restaurantTable, reservationRequestDto.getEndTime(), reservationRequestDto.getStartTime()).isEmpty()) {
+        if(!reservationRepository.findByRestaurantTableAndStartTimeBeforeAndEndTimeAfterAndReservationStatusNot(restaurantTable, reservationRequestDto.getEndTime(), reservationRequestDto.getStartTime(), ReservationStatus.CANCELLED).isEmpty()) {
             throw new ReservationTimeConflictException();
         }
 
+        int reservationLength = reservationRequestDto.getEndTime().getHour() - reservationRequestDto.getStartTime().getHour();
+        double finalPrice = tablePrice.getPrice() * ((double) reservationLength / 2 );
+
         if(client instanceof Client) {
-            if(((Client)client).getBalance() < tablePrice.getPrice()) {
+            if(((Client)client).getBalance() < finalPrice) {
                 throw new InsufficientFundsException();
             }
             else {
-                BalanceOperation balanceOperation = new BalanceOperation(client, LocalDateTime.now(), -tablePrice.getPrice(), ((Client)client).getBalance(), ((Client)client).getBalance() - tablePrice.getPrice(), BalanceOperationType.RESERVATION);
-                ((Client)client).setBalance(((Client)client).getBalance() - tablePrice.getPrice());
+                BalanceOperation balanceOperation = new BalanceOperation(client, LocalDateTime.now(), -finalPrice, ((Client)client).getBalance(), ((Client)client).getBalance() - finalPrice, BalanceOperationType.RESERVATION);
+                ((Client)client).setBalance(((Client)client).getBalance() - finalPrice);
                 userRepository.save(client);
                 balanceOperationRepository.save(balanceOperation);
             }
         }
 
         Reservation reservation = reservationMapper.toReservation(reservationRequestDto, client, restaurantTable);
-        reservation.setPrice(tablePrice.getPrice());
+        reservation.setPrice(finalPrice);
         reservation.setReservationStatus(ReservationStatus.CONFIRMED);
         reservation.setReservationCode(generateReservationCode());
         return reservationMapper.toReservationResponseDto(reservationRepository.save(reservation));
