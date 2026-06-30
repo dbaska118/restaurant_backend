@@ -27,4 +27,9 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             "ORDER BY r.restaurant_table_id ASC, r.start_time ASC",
             nativeQuery = true)
     List<Reservation> findNextReservations(@Param("bufferTime") LocalDateTime bufferTime, @Param("endOfDay") LocalDateTime endOfDay, @Param("status") ReservationStatus status);
+
+    List<Reservation> findByEmailAndReservationStatusAndStartTimeBefore(String email, ReservationStatus reservationStatus, LocalDateTime time);
+
 }
+
+

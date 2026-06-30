@@ -1,5 +1,6 @@
 package org.example.dto.reservation;
 
+import org.example.dto.restaurantTable.RestaurantTableReservationDto;
 import org.example.model.reservation.Reservation;
 import org.example.model.restaurantTable.RestaurantTable;
 import org.example.model.user.User;
@@ -49,5 +50,24 @@ public class ReservationMapper {
         nextReservationDTO.setEndTime(reservation.getEndTime());
 
         return nextReservationDTO;
+    }
+
+    public ReservationWithTableDto toReservationWithTableDTO(Reservation reservation) {
+        ReservationWithTableDto reservationDto = new ReservationWithTableDto();
+        reservationDto.setId(reservation.getId());
+        reservationDto.setEmail(reservation.getEmail());
+        reservationDto.setStartTime(reservation.getStartTime());
+        reservationDto.setEndTime(reservation.getEndTime());
+        reservationDto.setReservationStatus(reservation.getReservationStatus());
+
+        RestaurantTableReservationDto tableDto = new RestaurantTableReservationDto();
+        tableDto.setId(reservation.getRestaurantTable().getId());
+        tableDto.setName(reservation.getRestaurantTable().getName());
+        tableDto.setNumberOfChairs(reservation.getRestaurantTable().getNumberOfChairs());
+        tableDto.setStatus(reservation.getRestaurantTable().getStatus());
+        tableDto.setVersion(reservation.getRestaurantTable().getVersion());
+
+        reservationDto.setRestaurantTableReservationDTO(tableDto);
+        return reservationDto;
     }
 }

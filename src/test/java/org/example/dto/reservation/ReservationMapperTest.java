@@ -3,6 +3,7 @@ package org.example.dto.reservation;
 import org.example.model.reservation.Reservation;
 import org.example.model.reservation.ReservationStatus;
 import org.example.model.restaurantTable.RestaurantTable;
+import org.example.model.restaurantTable.RestaurantTableStatus;
 import org.example.model.user.Client;
 import org.example.model.user.User;
 import org.junit.jupiter.api.Assertions;
@@ -107,5 +108,27 @@ public class ReservationMapperTest {
         Assertions.assertEquals(table.getId(), dto.getTableId());
         Assertions.assertEquals(now, dto.getStartTime());
         Assertions.assertEquals(now.plusHours(2), dto.getEndTime());
+    }
+
+    @Test
+    public void toReservationWithTableDtoTest(){
+        LocalDateTime now = LocalDateTime.now();
+        RestaurantTable table = new RestaurantTable("Stolik 1", 4);
+        Reservation reservation = new Reservation("client@wp.pl", table, now, now.plusHours(2), 250, "000123", ReservationStatus.CONFIRMED);
+
+        entityManager.persist(table);
+        entityManager.persist(reservation);
+
+        ReservationWithTableDto dto = mapper.toReservationWithTableDTO(reservation);
+        Assertions.assertEquals(reservation.getId(), dto.getId());
+        Assertions.assertEquals("client@wp.pl", dto.getEmail());
+        Assertions.assertEquals(now, dto.getStartTime());
+        Assertions.assertEquals(now.plusHours(2), dto.getEndTime());
+        Assertions.assertEquals(ReservationStatus.CONFIRMED, dto.getReservationStatus());
+        Assertions.assertEquals(table.getId(), dto.getRestaurantTableReservationDTO().getId());
+        Assertions.assertEquals("Stolik 1", dto.getRestaurantTableReservationDTO().getName());
+        Assertions.assertEquals(4, dto.getRestaurantTableReservationDTO().getNumberOfChairs());
+        Assertions.assertEquals(RestaurantTableStatus.FREE, dto.getRestaurantTableReservationDTO().getStatus());
+        Assertions.assertEquals(table.getVersion(), dto.getRestaurantTableReservationDTO().getVersion());
     }
 }
