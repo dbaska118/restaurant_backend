@@ -83,4 +83,9 @@ public class ReservationController {
         return new ResponseEntity<>(reservationService.getNextReservations(), HttpStatus.OK);
     }
 
+    @GetMapping("/employee/{email}")
+    public ResponseEntity<List<ReservationWithTableDto>> getTodayReservationsByEmail(@PathVariable String email){
+        return new ResponseEntity<>(reservationService.getTodaysReservationsByEmail(email), HttpStatus.OK);
+    }
+
 }

@@ -5,6 +5,7 @@ import org.example.dto.balance.BalanceOperationDTO;
 import org.example.dto.reservation.NextReservationDTO;
 import org.example.dto.reservation.ReservationRequestDto;
 import org.example.dto.reservation.ReservationResponseDto;
+import org.example.dto.reservation.ReservationWithTableDto;
 import org.example.model.reservation.Reservation;
 import org.example.model.reservation.ReservationStatus;
 import org.example.model.restaurantTable.RestaurantTable;
@@ -170,6 +171,20 @@ public class ReservationControllerTest {
         ResponseEntity<List<NextReservationDTO>> response = reservationController.getNextReservations();
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
         Assertions.assertTrue(response.getBody().get(0) instanceof NextReservationDTO);
+    }
+
+    @Test
+    public void getTodayReservationsByEmailTest(){
+        LocalDateTime now = LocalDateTime.now();
+        RestaurantTable restaurantTable = new RestaurantTable("Stolik 1", 5);
+        entityManager.persist(restaurantTable);
+
+        Reservation reservation = new Reservation("client@wp.pl", restaurantTable, now, now.plusHours(2), 100, "000002", ReservationStatus.CONFIRMED);
+        entityManager.persist(reservation);
+
+        ResponseEntity<List<ReservationWithTableDto>> response = reservationController.getTodayReservationsByEmail("client@wp.pl");
+        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+        Assertions.assertTrue(response.getBody().get(0) instanceof ReservationWithTableDto);
 
     }
 }

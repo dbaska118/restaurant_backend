@@ -167,4 +167,15 @@ public class ReservationService {
         return nextReservations;
     }
 
+    public List<ReservationWithTableDto> getTodaysReservationsByEmail(String email) {
+        LocalDateTime endDay = LocalDateTime.now().with(LocalTime.MAX);
+        List<Reservation> reservationList = reservationRepository.findByEmailAndReservationStatusAndStartTimeBefore(email, ReservationStatus.CONFIRMED, endDay);
+
+        List<ReservationWithTableDto> dtoList = new ArrayList<>();
+        for(Reservation reservation : reservationList) {
+            ReservationWithTableDto dto = reservationMapper.toReservationWithTableDTO(reservation);
+            dtoList.add(dto);
+        }
+        return dtoList;
+    }
 }
