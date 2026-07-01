@@ -169,7 +169,8 @@ public class ReservationService {
 
     public List<ReservationWithTableDto> getTodaysReservationsByEmail(String email) {
         LocalDateTime endDay = LocalDateTime.now().with(LocalTime.MAX);
-        List<Reservation> reservationList = reservationRepository.findByEmailAndReservationStatusAndStartTimeBefore(email, ReservationStatus.CONFIRMED, endDay);
+        LocalDateTime startDay = endDay.with(LocalTime.MIN);
+        List<Reservation> reservationList = reservationRepository.findByEmailAndReservationStatusAndStartTimeAfterAndStartTimeBefore(email, ReservationStatus.CONFIRMED,startDay, endDay);
 
         List<ReservationWithTableDto> dtoList = new ArrayList<>();
         for(Reservation reservation : reservationList) {
