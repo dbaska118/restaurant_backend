@@ -9,6 +9,7 @@ import org.example.exception.*;
 import org.example.model.reservation.Reservation;
 import org.example.model.reservation.ReservationStatus;
 import org.example.model.restaurantTable.RestaurantTable;
+import org.example.model.restaurantTable.RestaurantTableStatus;
 import org.example.model.restaurantTable.TablePrice;
 import org.example.model.user.Client;
 import org.example.model.user.User;
@@ -228,5 +229,53 @@ public class ReservationServiceTest {
         Assertions.assertEquals(1, dtoList.size());
         Assertions.assertEquals(reservation2.getId(), dtoList.get(0).getId());
         Assertions.assertEquals(reservation2.getRestaurantTable().getId(), dtoList.get(0).getRestaurantTableReservationDTO().getId());
+    }
+
+    @Test
+    public void StartReservationTest(){
+        StartReservationRequest request = new StartReservationRequest();
+        request.setReservationId(-1L);
+        request.setTableId(-1L);
+        request.setReservationCode("000000");
+        request.setVersion(156);
+
+        LocalDateTime now = LocalDateTime.now();
+        RestaurantTable restaurantTable = new RestaurantTable("Stolik 1", 5);
+        Reservation reservation = new Reservation("client@wp.pl", restaurantTable, now, now.plusHours(2), 100, "000002", ReservationStatus.CONFIRMED);
+
+        Assertions.assertThrows(ReservationNotFoundException.class, () -> {
+            reservationService.startReservation(request);
+        });
+
+        entityManager.persist(reservation);
+        request.setReservationId(reservation.getId());
+        Assertions.assertThrows(RestaurantTableNotFoundException.class, () -> {
+            reservationService.startReservation(request);
+        });
+
+        entityManager.persist(restaurantTable);
+        request.setTableId(restaurantTable.getId());
+        Assertions.assertThrows(InvalidReservationCodeException.class, () -> {
+            reservationService.startReservation(request);
+        });
+
+        request.setReservationCode("000002");
+        Assertions.assertThrows(RestaurantTableStateConflict.class, () -> {
+            reservationService.startReservation(request);
+        });
+
+        request.setVersion(restaurantTable.getVersion());
+        restaurantTable.setStatus(RestaurantTableStatus.OCCUPIED);
+        entityManager.persist(restaurantTable);
+        Assertions.assertThrows(RestaurantTableStateConflict.class, () -> {
+            reservationService.startReservation(request);
+        });
+
+        restaurantTable.setStatus(RestaurantTableStatus.FREE);
+        entityManager.persist(restaurantTable);
+        ReservationWithTableDto dto = reservationService.startReservation(request);
+        Assertions.assertEquals(ReservationStatus.IN_PROGRESS, dto.getReservationStatus());
+        Assertions.assertEquals(RestaurantTableStatus.OCCUPIED, dto.getRestaurantTableReservationDTO().getStatus());
+
     }
 }

@@ -10,6 +10,7 @@ import org.example.model.balance.BalanceOperation;
 import org.example.model.balance.BalanceOperationType;
 import org.example.model.reservation.*;
 import org.example.model.restaurantTable.RestaurantTable;
+import org.example.model.restaurantTable.RestaurantTableStatus;
 import org.example.model.restaurantTable.TablePrice;
 import org.example.model.user.Client;
 import org.example.model.user.User;
@@ -178,5 +179,37 @@ public class ReservationService {
             dtoList.add(dto);
         }
         return dtoList;
+    }
+
+    @Transactional
+    public ReservationWithTableDto startReservation(StartReservationRequest startReservationRequest) {
+        Reservation reservation = reservationRepository.findById(startReservationRequest.getReservationId()).orElseThrow(ReservationNotFoundException::new);
+        RestaurantTable restaurantTable = restaurantTableRepository.findById(startReservationRequest.getTableId()).orElseThrow(RestaurantTableNotFoundException::new);
+
+        if(!startReservationRequest.getReservationCode().equals(reservation.getReservationCode())) {
+            throw new InvalidReservationCodeException();
+        }
+
+        if(!startReservationRequest.getVersion().equals(restaurantTable.getVersion())) {
+            throw new RestaurantTableStateConflict();
+        }
+
+        if(restaurantTable.getStatus().equals(RestaurantTableStatus.OCCUPIED)){
+            throw new RestaurantTableStateConflict();
+        }
+
+        reservation.setReservationStatus(ReservationStatus.IN_PROGRESS);
+        restaurantTable.setStatus(RestaurantTableStatus.OCCUPIED);
+
+        try {
+            reservationRepository.save(reservation);
+            restaurantTableRepository.save(restaurantTable);
+            restaurantTableRepository.flush();
+            return reservationMapper.toReservationWithTableDTO(reservation);
+        }
+        catch(Exception e){
+            throw new RestaurantTableStateConflict();
+        }
+
     }
 }
