@@ -2,13 +2,15 @@ package org.example.controller.reservation;
 
 import jakarta.persistence.EntityManager;
 import org.example.dto.balance.BalanceOperationDTO;
-import org.example.dto.reservation.NextReservationDTO;
-import org.example.dto.reservation.ReservationRequestDto;
-import org.example.dto.reservation.ReservationResponseDto;
-import org.example.dto.reservation.ReservationWithTableDto;
+import org.example.dto.reservation.*;
+import org.example.exception.InvalidReservationCodeException;
+import org.example.exception.ReservationNotFoundException;
+import org.example.exception.RestaurantTableNotFoundException;
+import org.example.exception.RestaurantTableStateConflict;
 import org.example.model.reservation.Reservation;
 import org.example.model.reservation.ReservationStatus;
 import org.example.model.restaurantTable.RestaurantTable;
+import org.example.model.restaurantTable.RestaurantTableStatus;
 import org.example.model.restaurantTable.TablePrice;
 import org.example.model.user.Client;
 import org.example.model.user.User;
@@ -186,5 +188,51 @@ public class ReservationControllerTest {
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
         Assertions.assertTrue(response.getBody().get(0) instanceof ReservationWithTableDto);
 
+    }
+
+    @Test
+    public void StartReservationTest(){
+        StartReservationRequest request = new StartReservationRequest();
+        request.setReservationId(-1L);
+        request.setTableId(-1L);
+        request.setReservationCode("000000");
+        request.setVersion(156);
+
+        LocalDateTime now = LocalDateTime.now();
+        RestaurantTable restaurantTable = new RestaurantTable("Stolik 1", 5);
+        Reservation reservation = new Reservation("client@wp.pl", restaurantTable, now, now.plusHours(2), 100, "000002", ReservationStatus.CONFIRMED);
+
+        ResponseEntity<ReservationWithTableDto> response = reservationController.startReservation(request);
+        Assertions.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+
+        entityManager.persist(reservation);
+        request.setReservationId(reservation.getId());
+        response = reservationController.startReservation(request);
+        Assertions.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+
+        entityManager.persist(restaurantTable);
+        request.setTableId(restaurantTable.getId());
+        response = reservationController.startReservation(request);
+        Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+
+        request.setReservationCode("000002");
+        response = reservationController.startReservation(request);
+        Assertions.assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
+        Assertions.assertInstanceOf(ReservationWithTableDto.class, response.getBody());
+        Assertions.assertEquals(response.getBody().getId(), reservation.getId());
+
+        request.setVersion(restaurantTable.getVersion());
+        restaurantTable.setStatus(RestaurantTableStatus.OCCUPIED);
+        entityManager.persist(restaurantTable);
+        response = reservationController.startReservation(request);
+        Assertions.assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
+        Assertions.assertInstanceOf(ReservationWithTableDto.class, response.getBody());
+        Assertions.assertEquals(response.getBody().getId(), reservation.getId());
+
+        restaurantTable.setStatus(RestaurantTableStatus.FREE);
+        entityManager.persist(restaurantTable);
+        response = reservationController.startReservation(request);
+        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+        Assertions.assertInstanceOf(ReservationWithTableDto.class, response.getBody());
     }
 }

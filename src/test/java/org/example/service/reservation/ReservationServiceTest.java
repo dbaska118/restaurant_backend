@@ -278,4 +278,23 @@ public class ReservationServiceTest {
         Assertions.assertEquals(RestaurantTableStatus.OCCUPIED, dto.getRestaurantTableReservationDTO().getStatus());
 
     }
+
+    @Test
+    public void getReservationWithTableDtoByIdTest(){
+        LocalDateTime now = LocalDateTime.now();
+        RestaurantTable restaurantTable = new RestaurantTable("Stolik 1", 5);
+        Reservation reservation = new Reservation("client@wp.pl", restaurantTable, now, now.plusHours(2), 100, "000002", ReservationStatus.CONFIRMED);
+
+        Assertions.assertThrows(ReservationNotFoundException.class, () -> {
+            reservationService.getReservationWithTableDtoById(-1L);
+        });
+
+        entityManager.persist(restaurantTable);
+        entityManager.persist(reservation);
+
+        ReservationWithTableDto dto = reservationService.getReservationWithTableDtoById(reservation.getId());
+        Assertions.assertEquals(dto.getId(), reservation.getId());
+        Assertions.assertEquals(dto.getRestaurantTableReservationDTO().getId(), restaurantTable.getId());
+
+    }
 }

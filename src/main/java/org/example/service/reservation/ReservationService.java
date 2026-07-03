@@ -212,4 +212,10 @@ public class ReservationService {
         }
 
     }
+
+    public ReservationWithTableDto getReservationWithTableDtoById(long id) {
+        Reservation reservation = reservationRepository.findById(id).orElseThrow(ReservationNotFoundException::new);
+        return reservationMapper.toReservationWithTableDTO(reservation);
+
+    }
 }

@@ -88,4 +88,22 @@ public class ReservationController {
         return new ResponseEntity<>(reservationService.getTodaysReservationsByEmail(email), HttpStatus.OK);
     }
 
+    @PostMapping("/employee/startReservation")
+    public ResponseEntity<ReservationWithTableDto> startReservation(@RequestBody StartReservationRequest request){
+        try {
+            return new ResponseEntity<>(reservationService.startReservation(request), HttpStatus.OK);
+        }
+        catch (RestaurantTableStateConflict e) {
+            ReservationWithTableDto responseBody = reservationService.getReservationWithTableDtoById(request.getReservationId());
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(responseBody);
+        }
+        catch (InvalidReservationCodeException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        catch (ReservationNotFoundException | RestaurantTableNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+
 }
