@@ -158,8 +158,9 @@ public class ReservationService {
     public List<NextReservationDTO> getNextReservations() {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime endDay = now.with(LocalTime.MAX);
+        LocalDateTime startDay = now.with(LocalTime.MIN);
 
-        List<Reservation> reservationList = reservationRepository.findNextReservations(now.minusHours(1), endDay, ReservationStatus.CONFIRMED);
+        List<Reservation> reservationList = reservationRepository.findNextReservations(startDay, endDay, ReservationStatus.CONFIRMED);
         List<NextReservationDTO> nextReservations = new ArrayList<>();
         for(Reservation reservation : reservationList) {
             NextReservationDTO nextReservationDTO = reservationMapper.toNextReservationDTO(reservation);

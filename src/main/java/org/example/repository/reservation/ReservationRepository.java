@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
@@ -29,6 +30,8 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     List<Reservation> findNextReservations(@Param("bufferTime") LocalDateTime bufferTime, @Param("endOfDay") LocalDateTime endOfDay, @Param("status") ReservationStatus status);
 
     List<Reservation> findByEmailAndReservationStatusAndStartTimeAfterAndStartTimeBefore(String email, ReservationStatus reservationStatus, LocalDateTime start, LocalDateTime end);
+
+    Optional<Reservation> findByRestaurantTableIdAndReservationStatus(Long restaurantTableId, ReservationStatus reservationStatus);
 
 }
 

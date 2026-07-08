@@ -5,6 +5,8 @@ import org.example.dto.restaurantTable.RestaurantTableStatusRequest;
 import org.example.exception.RestaurantTableNotFoundException;
 import org.example.exception.RestaurantTableStateConflict;
 import org.example.exception.TablePriceNotFoundException;
+import org.example.model.reservation.Reservation;
+import org.example.model.reservation.ReservationStatus;
 import org.example.model.restaurantTable.RestaurantTable;
 import org.example.model.restaurantTable.RestaurantTableStatus;
 import org.example.model.restaurantTable.TablePrice;
@@ -16,6 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -136,4 +139,25 @@ public class RestaurantTableServiceTest {
         });
     }
 
+
+    @Test
+    public void updateStatusWithReservationTest(){
+        LocalDateTime now = LocalDateTime.now();
+
+        RestaurantTable restaurantTable = new RestaurantTable("Stolik 1", 5);
+        restaurantTable.setStatus(RestaurantTableStatus.OCCUPIED);
+        entityManager.persist(restaurantTable);
+
+
+        Reservation reservation = new Reservation("text@wp.pl", restaurantTable, now.plusHours(4), now.plusHours(6), 100, "000001", ReservationStatus.IN_PROGRESS);
+        entityManager.persist(reservation);
+
+
+        RestaurantTableStatusRequest request = new RestaurantTableStatusRequest(restaurantTable.getId(), restaurantTable.getVersion(), RestaurantTableStatus.FREE);
+        restaurantTableService.updateStatus(restaurantTable.getId(), request);
+
+        Assertions.assertEquals(RestaurantTableStatus.FREE, restaurantTable.getStatus());
+        Assertions.assertEquals(ReservationStatus.COMPLETED, reservation.getReservationStatus());
+
+    }
 }

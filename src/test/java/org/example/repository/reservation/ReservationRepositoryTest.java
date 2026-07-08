@@ -15,6 +15,7 @@ import org.springframework.test.context.ActiveProfiles;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -49,7 +50,25 @@ public class ReservationRepositoryTest {
         List<Reservation> reservations = reservationRepository.findNextReservations(now.minusHours(1), endDay, ReservationStatus.CONFIRMED);
         Assertions.assertEquals(1, reservations.size());
         Assertions.assertEquals(reservation2, reservations.get(0));
+    }
+
+    @Test
+    public void findByRestaurantTableIdAndReservationStatusTest(){
+        LocalDateTime now = LocalDateTime.now();
+
+        RestaurantTable restaurantTable = new RestaurantTable("Stolik 1", 5);
+        RestaurantTable restaurantTable2 = new RestaurantTable("Stolik 2", 3);
+        entityManager.persist(restaurantTable);
+        entityManager.persist(restaurantTable2);
 
 
+        Reservation reservation = new Reservation("text@wp.pl", restaurantTable, now.plusHours(4), now.plusHours(6), 100, "000001", ReservationStatus.CONFIRMED);
+        Reservation reservation2 = new Reservation("client@wp.pl", restaurantTable2, now, now.plusHours(2), 100, "000002", ReservationStatus.CONFIRMED);
+        entityManager.persist(reservation);
+        entityManager.persist(reservation2);
+
+        Optional<Reservation> reservationDB = reservationRepository.findByRestaurantTableIdAndReservationStatus(restaurantTable2.getId(), ReservationStatus.CONFIRMED);
+        Assertions.assertTrue(reservationDB.isPresent());
+        Assertions.assertEquals(reservation2, reservationDB.get());
     }
 }

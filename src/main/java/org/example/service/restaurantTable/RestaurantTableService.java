@@ -4,8 +4,12 @@ import org.example.dto.restaurantTable.RestaurantTableStatusRequest;
 import org.example.exception.RestaurantTableNotFoundException;
 import org.example.exception.RestaurantTableStateConflict;
 import org.example.exception.TablePriceNotFoundException;
+import org.example.model.reservation.Reservation;
+import org.example.model.reservation.ReservationStatus;
 import org.example.model.restaurantTable.RestaurantTable;
+import org.example.model.restaurantTable.RestaurantTableStatus;
 import org.example.model.restaurantTable.TablePrice;
+import org.example.repository.reservation.ReservationRepository;
 import org.example.repository.restaurantTable.RestaurantTableRepository;
 import org.example.repository.restaurantTable.TablePriceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +23,13 @@ public class RestaurantTableService {
 
     private final RestaurantTableRepository restaurantTableRepository;
     private final TablePriceRepository tablePriceRepository;
+    private final ReservationRepository reservationRepository;
 
     @Autowired
-    public RestaurantTableService(RestaurantTableRepository restaurantTableRepository, TablePriceRepository tablePriceRepository) {
+    public RestaurantTableService(RestaurantTableRepository restaurantTableRepository, TablePriceRepository tablePriceRepository, ReservationRepository reservationRepository) {
         this.restaurantTableRepository = restaurantTableRepository;
         this.tablePriceRepository = tablePriceRepository;
+        this.reservationRepository = reservationRepository;
     }
 
     @Transactional
@@ -76,6 +82,14 @@ public class RestaurantTableService {
 
         if (restaurantTableDB.getStatus() == request.getStatus()) {
             return restaurantTableDB;
+        }
+
+        if (request.getStatus() == RestaurantTableStatus.FREE) {
+            reservationRepository.findByRestaurantTableIdAndReservationStatus(id, ReservationStatus.IN_PROGRESS)
+                    .ifPresent(reservation -> {
+                        reservation.setReservationStatus(ReservationStatus.COMPLETED);
+                        reservationRepository.save(reservation);
+            });
         }
 
         restaurantTableDB.setStatus(request.getStatus());
