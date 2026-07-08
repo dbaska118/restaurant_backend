@@ -160,7 +160,12 @@ public class ReservationService {
         LocalDateTime endDay = now.with(LocalTime.MAX);
         LocalDateTime startDay = now.with(LocalTime.MIN);
 
-        List<Reservation> reservationList = reservationRepository.findNextReservations(startDay, endDay, ReservationStatus.CONFIRMED);
+        List<ReservationStatus> statuses = List.of(
+                ReservationStatus.CONFIRMED,
+                ReservationStatus.IN_PROGRESS
+        );
+
+        List<Reservation> reservationList = reservationRepository.findNextReservations(startDay, endDay, statuses);
         List<NextReservationDTO> nextReservations = new ArrayList<>();
         for(Reservation reservation : reservationList) {
             NextReservationDTO nextReservationDTO = reservationMapper.toNextReservationDTO(reservation);

@@ -1,5 +1,7 @@
 package org.example.dto.reservation;
 
+import org.example.model.reservation.ReservationStatus;
+
 import java.time.LocalDateTime;
 
 public class NextReservationDTO {
@@ -11,6 +13,8 @@ public class NextReservationDTO {
     private LocalDateTime startTime;
 
     private LocalDateTime endTime;
+
+    private ReservationStatus status;
 
     public Long getId() {
         return id;
@@ -42,5 +46,13 @@ public class NextReservationDTO {
 
     public void setEndTime(LocalDateTime endTime) {
         this.endTime = endTime;
+    }
+
+    public ReservationStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(ReservationStatus status) {
+        this.status = status;
     }
 }

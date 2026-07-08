@@ -48,6 +48,7 @@ public class ReservationMapper {
         nextReservationDTO.setTableId(reservation.getRestaurantTable().getId());
         nextReservationDTO.setStartTime(reservation.getStartTime());
         nextReservationDTO.setEndTime(reservation.getEndTime());
+        nextReservationDTO.setStatus(reservation.getReservationStatus());
 
         return nextReservationDTO;
     }

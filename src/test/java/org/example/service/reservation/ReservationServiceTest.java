@@ -188,23 +188,33 @@ public class ReservationServiceTest {
         LocalDateTime now = LocalDateTime.now();
         RestaurantTable restaurantTable = new RestaurantTable("Stolik 1", 5);
         RestaurantTable restaurantTable2 = new RestaurantTable("Stolik 2", 3);
+        RestaurantTable restaurantTable3 = new RestaurantTable("Stolik 3", 3);
         entityManager.persist(restaurantTable);
         entityManager.persist(restaurantTable2);
+        entityManager.persist(restaurantTable3);
 
 
         Reservation reservation = new Reservation("text@wp.pl", restaurantTable, now.plusHours(4), now.plusHours(6), 100, "000001", ReservationStatus.CONFIRMED);
         Reservation reservation2 = new Reservation("client@wp.pl", restaurantTable, now, now.plusHours(2), 100, "000002", ReservationStatus.CONFIRMED);
         Reservation reservation3 = new Reservation("client@wp.pl", restaurantTable2, now, now.plusHours(2), 100, "000003", ReservationStatus.CANCELLED);
+        Reservation reservation4 = new Reservation("client@wp.pl", restaurantTable3, now.minusHours(1), now.plusHours(1), 100, "000003", ReservationStatus.IN_PROGRESS);
         entityManager.persist(reservation);
         entityManager.persist(reservation2);
         entityManager.persist(reservation3);
+        entityManager.persist(reservation4);
 
         List<NextReservationDTO> dtoList = reservationService.getNextReservations();
-        Assertions.assertEquals(1, dtoList.size());
+        Assertions.assertEquals(2, dtoList.size());
         Assertions.assertEquals(reservation2.getId(), dtoList.get(0).getId());
         Assertions.assertEquals(restaurantTable.getId(), dtoList.get(0).getTableId());
         Assertions.assertEquals(reservation2.getStartTime(), dtoList.get(0).getStartTime());
         Assertions.assertEquals(reservation2.getEndTime(), dtoList.get(0).getEndTime());
+        Assertions.assertEquals(ReservationStatus.CONFIRMED, dtoList.get(0).getStatus());
+
+        Assertions.assertEquals(reservation4.getId(), dtoList.get(1).getId());
+        Assertions.assertEquals(restaurantTable3.getId(), dtoList.get(1).getTableId());
+        Assertions.assertEquals(reservation4.getStartTime(), dtoList.get(1).getStartTime());
+        Assertions.assertEquals(reservation4.getEndTime(), dtoList.get(1).getEndTime());
 
 
     }

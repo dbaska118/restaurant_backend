@@ -108,6 +108,7 @@ public class ReservationMapperTest {
         Assertions.assertEquals(table.getId(), dto.getTableId());
         Assertions.assertEquals(now, dto.getStartTime());
         Assertions.assertEquals(now.plusHours(2), dto.getEndTime());
+        Assertions.assertEquals(ReservationStatus.CONFIRMED, dto.getStatus());
     }
 
     @Test

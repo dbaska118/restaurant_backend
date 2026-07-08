@@ -47,7 +47,9 @@ public class ReservationRepositoryTest {
         entityManager.persist(reservation2);
         entityManager.persist(reservation3);
 
-        List<Reservation> reservations = reservationRepository.findNextReservations(now.minusHours(1), endDay, ReservationStatus.CONFIRMED);
+        List<ReservationStatus> status = List.of(ReservationStatus.CONFIRMED);
+
+        List<Reservation> reservations = reservationRepository.findNextReservations(now.minusHours(1), endDay, status);
         Assertions.assertEquals(1, reservations.size());
         Assertions.assertEquals(reservation2, reservations.get(0));
     }
