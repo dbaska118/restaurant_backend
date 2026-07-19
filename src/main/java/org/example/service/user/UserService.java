@@ -1,8 +1,6 @@
 package org.example.service.user;
 
-import org.example.dto.user.ChangeNameRequest;
-import org.example.dto.user.ChangePasswordRequest;
-import org.example.dto.user.NameResponse;
+import org.example.dto.user.*;
 import org.example.exception.*;
 import org.example.model.user.Admin;
 import org.example.model.user.Client;
@@ -20,11 +18,13 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UserMapper userMapper;
 
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, UserMapper userMapper) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.userMapper = userMapper;
     }
 
     public Double getBalance(String email) {
@@ -120,5 +120,11 @@ public class UserService {
         nameResponse.setFirstName(user.getFirstName());
         nameResponse.setLastName(user.getLastName());
         return nameResponse;
+    }
+
+    public UserDtoResponse findClientByEmail(String email) {
+        User user = userRepository.findByEmailAndRole(email, "client").orElseThrow(UserNotFoundException::new);
+        UserDtoResponse clientDtoResponse = userMapper.fromUser(user);
+        return clientDtoResponse;
     }
 }

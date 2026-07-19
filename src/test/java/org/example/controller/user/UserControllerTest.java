@@ -247,4 +247,19 @@ public class UserControllerTest {
         response = userController.getName("client@wp.pl", principal2);
         Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
+
+    @Test
+    public void findClientByEmailTest(){
+        User client = new Client("client@wp.pl", "password", "Jan", "Nowak");
+        User employee = new Employee("employee@wp.pl", "password", "Michał", "Kowal");
+        entityManager.persist(employee);
+        entityManager.persist(client);
+
+        ResponseEntity<UserDtoResponse> response = userController.findClientByEmail(client.getEmail());
+        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+        Assertions.assertTrue(response.hasBody());
+
+        response = userController.findClientByEmail(employee.getEmail());
+        Assertions.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
 }

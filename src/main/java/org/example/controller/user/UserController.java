@@ -210,5 +210,16 @@ public class UserController {
         }
     }
 
+    @GetMapping("/employee/findClient/{email}")
+    public ResponseEntity<UserDtoResponse> findClientByEmail(@PathVariable String email) {
+        try {
+            UserDtoResponse client = userService.findClientByEmail(email);
+            return new ResponseEntity<>(client, HttpStatus.OK);
+        }
+        catch (UserNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
 
 }

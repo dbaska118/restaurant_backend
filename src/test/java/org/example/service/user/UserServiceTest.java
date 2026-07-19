@@ -5,6 +5,7 @@ import jakarta.persistence.EntityManager;
 import org.example.dto.user.ChangeNameRequest;
 import org.example.dto.user.ChangePasswordRequest;
 import org.example.dto.user.NameResponse;
+import org.example.dto.user.UserDtoResponse;
 import org.example.exception.*;
 import org.example.model.user.Admin;
 import org.example.model.user.Client;
@@ -242,5 +243,21 @@ public class UserServiceTest {
         Assertions.assertThrows(UserNotFoundException.class, () -> {
             userService.getName("test@wp.pl");
         });
+    }
+
+    @Test
+    public void findClientByEmailTest(){
+        User client = new Client("client@wp.pl", "password", "Jan", "Nowak");
+        User employee = new Employee("employee@wp.pl", "password", "Michał", "Kowal");
+        entityManager.persist(employee);
+        entityManager.persist(client);
+
+        UserDtoResponse userDtoResponse = userService.findClientByEmail(client.getEmail());
+        Assertions.assertEquals(userDtoResponse.getEmail(), client.getEmail());
+
+        Assertions.assertThrows(UserNotFoundException.class, () -> {
+            userService.findClientByEmail(employee.getEmail());
+        });
+
     }
 }

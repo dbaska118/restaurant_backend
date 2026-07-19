@@ -1,6 +1,7 @@
 package org.example.repository.user;
 
 import jakarta.persistence.LockModeType;
+import jakarta.validation.constraints.NotEmpty;
 import org.example.model.user.User;
 import org.springframework.data.domain.Limit;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,6 +18,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     public Optional<User> findByEmail(String email);
 
     public List<User> findAllByEnabledTrueAndRoleInOrderByIdAsc(List<String> roles);
+
+    Optional<User> findByEmailAndRole(String email, String role);
 
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
