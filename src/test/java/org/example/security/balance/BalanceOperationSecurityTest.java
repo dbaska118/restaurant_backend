@@ -3,13 +3,17 @@ package org.example.security.balance;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.dto.balance.AddBalanceRequest;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -25,32 +29,32 @@ public class BalanceOperationSecurityTest {
     private ObjectMapper objectMapper;
 
     @Test
-    @WithMockUser(username = "client@test.pl", authorities = {"client"})
     public void addFundsTestAuthorized() throws Exception {
-
         AddBalanceRequest request = new AddBalanceRequest("client@test.pl", 50);
 
         mockMvc.perform(post("/api/balanceOperation/addFunds")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
+                        .content(objectMapper.writeValueAsString(request))
+                        .with(user("client@test.pl").authorities(new SimpleGrantedAuthority("client"))))
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    @WithMockUser(username = "user@test.pl", authorities = {"client"})
     public void addFundsTestForbiddenWrongUser() throws Exception {
         AddBalanceRequest request = new AddBalanceRequest("client@test.pl", 50);
 
         mockMvc.perform(post("/api/balanceOperation/addFunds")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
+                        .content(objectMapper.writeValueAsString(request))
+                        .with(user("user@test.pl").authorities(new SimpleGrantedAuthority("client"))))
                 .andExpect(status().isForbidden());
     }
 
-    @Test
-    @WithMockUser(authorities = {"employee", "admin", "headAdmin"})
-    public void addFundsTestForbiddenWrongRole() throws Exception {
-        mockMvc.perform(post("/api/balanceOperation/addFunds"))
+    @ParameterizedTest
+    @ValueSource(strings = {"headAdmin", "admin", "employee"})
+    public void addFundsTestForbiddenWrongRole(String role) throws Exception {
+        mockMvc.perform(post("/api/balanceOperation/addFunds")
+                        .with(user("user@wp.pl").authorities(new SimpleGrantedAuthority(role))))
                 .andExpect(status().isForbidden());
     }
 
@@ -63,23 +67,24 @@ public class BalanceOperationSecurityTest {
 
 
     @Test
-    @WithMockUser(username = "client@test.pl", authorities = {"client"})
     public void getAllBalanceOperationsTestAuthorized() throws Exception {
-        mockMvc.perform(get("/api/balanceOperation/client@test.pl"))
+        mockMvc.perform(get("/api/balanceOperation/client@test.pl")
+                    .with(user("client@test.pl").authorities(new SimpleGrantedAuthority("client"))))
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    @WithMockUser(authorities = {"client"})
     public void getAllBalanceOperationsTestForbiddenWrongUser() throws Exception {
-        mockMvc.perform(get("/api/balanceOperation/client@test.pl"))
+        mockMvc.perform(get("/api/balanceOperation/client@test.pl")
+                        .with(user("user@test.pl").authorities(new SimpleGrantedAuthority("client"))))
                 .andExpect(status().isForbidden());
     }
 
-    @Test
-    @WithMockUser(authorities = {"employee", "admin", "headAdmin"})
-    public void getAllBalanceOperationsTestForbiddenWrongRole() throws Exception {
-        mockMvc.perform(get("/api/balanceOperation/client@test.pl"))
+    @ParameterizedTest
+    @ValueSource(strings = {"headAdmin", "admin", "employee"})
+    public void getAllBalanceOperationsTestForbiddenWrongRole(String role) throws Exception {
+        mockMvc.perform(get("/api/balanceOperation/client@test.pl")
+                        .with(user("user@wp.pl").authorities(new SimpleGrantedAuthority(role))))
                 .andExpect(status().isForbidden());
     }
 
@@ -93,16 +98,17 @@ public class BalanceOperationSecurityTest {
 
 
     @Test
-    @WithMockUser(authorities = {"employee"})
     public void addFundsEmployeeTestAuthorized() throws Exception {
-        mockMvc.perform(post("/api/balanceOperation/employee/addFunds"))
+        mockMvc.perform(post("/api/balanceOperation/employee/addFunds")
+                        .with(user("user@wp.pl").authorities(new SimpleGrantedAuthority("employee"))))
                 .andExpect(status().isBadRequest());
     }
 
-    @Test
-    @WithMockUser(authorities = {"client", "admin", "headAdmin"})
-    public void addFundsEmployeeTestForbiddenWrongRole() throws Exception {
-        mockMvc.perform(post("/api/balanceOperation/employee/addFunds"))
+    @ParameterizedTest
+    @ValueSource(strings = {"headAdmin", "admin", "client"})
+    public void addFundsEmployeeTestForbiddenWrongRole(String role) throws Exception {
+        mockMvc.perform(post("/api/balanceOperation/employee/addFunds")
+                        .with(user("user@wp.pl").authorities(new SimpleGrantedAuthority(role))))
                 .andExpect(status().isForbidden());
     }
 
