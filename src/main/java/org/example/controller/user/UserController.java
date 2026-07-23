@@ -53,7 +53,7 @@ public class UserController {
     public ResponseEntity<NameResponse> getName(@PathVariable String email, Principal principal) {
         String emailToken = principal.getName();
         if(!email.equals(emailToken)) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
         try {
             NameResponse nameResponse = userService.getName(email);
@@ -69,7 +69,7 @@ public class UserController {
     public ResponseEntity<?> changeName(@RequestBody ChangeNameRequest changeNameRequest, Principal principal) {
         String email = principal.getName();
         if(!email.equals(changeNameRequest.getEmail())) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
         try {
             userService.changeName(changeNameRequest);

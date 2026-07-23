@@ -220,7 +220,7 @@ public class UserControllerTest {
         };
 
         response = userController.changeName(request, principal2);
-        Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        Assertions.assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
     }
 
     @Test
@@ -245,7 +245,7 @@ public class UserControllerTest {
         }
         };
         response = userController.getName("client@wp.pl", principal2);
-        Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        Assertions.assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
     }
 
     @Test
